@@ -110,6 +110,31 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
   .match-teams{min-width:0}
   .hero-stats{gap:24px}
 }
+
+/* ── Standings Modal ── */
+.group-badge{cursor:pointer;transition:opacity .15s}
+.group-badge:hover{opacity:0.75}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:12px;width:min(480px,94vw);max-height:90vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;letter-spacing:0.06em}
+.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .15s}
+.modal-close:hover{color:var(--text)}
+.modal-body{overflow-y:auto;padding:0}
+.standings-table{width:100%;border-collapse:collapse;font-size:13px}
+.standings-table th{font-family:'Oswald',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.1em;color:var(--muted);padding:8px 12px;text-align:center;border-bottom:1px solid var(--border);text-transform:uppercase}
+.standings-table th:nth-child(2){text-align:left}
+.standings-table td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--border);vertical-align:middle}
+.standings-table td:nth-child(2){text-align:left}
+.standings-table tr:last-child td{border-bottom:none}
+.standings-table tr:hover td{background:var(--surface2)}
+.standings-table tr.qualified td{border-left:3px solid var(--gold)}
+.rank-num{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;color:var(--dim)}
+.rank-num.q1,.rank-num.q2{color:var(--gold)}
+.team-name{font-weight:400;color:var(--text)}
+.pts{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:var(--gold2)}
+.modal-note{font-size:10px;color:var(--muted);padding:10px 16px;text-align:center;border-top:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -190,6 +215,22 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
   <button class="filter-btn" data-g="J" onclick="filterGroup('J',this)">J</button>
   <button class="filter-btn" data-g="K" onclick="filterGroup('K',this)">K</button>
   <button class="filter-btn" data-g="L" onclick="filterGroup('L',this)">L</button>
+  <div class="tz-sep"></div>
+  <select class="tz-select" id="country-select" onchange="filterCountry(this.value)">
+    <option value="" id="country-placeholder">🌍 选择国家</option>
+    <optgroup label="── A组 ──" id="cg-A"><option value="Mexico">🇲🇽 墨西哥</option><option value="South Africa">🇿🇦 南非</option><option value="South Korea">🇰🇷 韩国</option><option value="Czechia">🇨🇿 捷克</option></optgroup>
+    <optgroup label="── B组 ──" id="cg-B"><option value="Canada">🇨🇦 加拿大</option><option value="Bosnia">🇧🇦 波黑</option><option value="Qatar">🇶🇦 卡塔尔</option><option value="Switzerland">🇨🇭 瑞士</option></optgroup>
+    <optgroup label="── C组 ──" id="cg-C"><option value="Brazil">🇧🇷 巴西</option><option value="Morocco">🇲🇦 摩洛哥</option><option value="Haiti">🇭🇹 海地</option><option value="Scotland">🏴󠁧󠁢󠁳󠁣󠁴󠁿 苏格兰</option></optgroup>
+    <optgroup label="── D组 ──" id="cg-D"><option value="USA">🇺🇸 美国</option><option value="Paraguay">🇵🇾 巴拉圭</option><option value="Australia">🇦🇺 澳大利亚</option><option value="Turkey">🇹🇷 土耳其</option></optgroup>
+    <optgroup label="── E组 ──" id="cg-E"><option value="Germany">🇩🇪 德国</option><option value="Curacao">🇨🇼 库拉索</option><option value="Ivory Coast">🇨🇮 科特迪瓦</option><option value="Ecuador">🇪🇨 厄瓜多尔</option></optgroup>
+    <optgroup label="── F组 ──" id="cg-F"><option value="Netherlands">🇳🇱 荷兰</option><option value="Japan">🇯🇵 日本</option><option value="Sweden">🇸🇪 瑞典</option><option value="Tunisia">🇹🇳 突尼斯</option></optgroup>
+    <optgroup label="── G组 ──" id="cg-G"><option value="Belgium">🇧🇪 比利时</option><option value="Egypt">🇪🇬 埃及</option><option value="Iran">🇮🇷 伊朗</option><option value="New Zealand">🇳🇿 新西兰</option></optgroup>
+    <optgroup label="── H组 ──" id="cg-H"><option value="Spain">🇪🇸 西班牙</option><option value="Cape Verde">🇨🇻 佛得角</option><option value="Saudi Arabia">🇸🇦 沙特</option><option value="Uruguay">🇺🇾 乌拉圭</option></optgroup>
+    <optgroup label="── I组 ──" id="cg-I"><option value="France">🇫🇷 法国</option><option value="Senegal">🇸🇳 塞内加尔</option><option value="Iraq">🇮🇶 伊拉克</option><option value="Norway">🇳🇴 挪威</option></optgroup>
+    <optgroup label="── J组 ──" id="cg-J"><option value="Argentina">🇦🇷 阿根廷</option><option value="Algeria">🇩🇿 阿尔及利亚</option><option value="Austria">🇦🇹 奥地利</option><option value="Jordan">🇯🇴 约旦</option></optgroup>
+    <optgroup label="── K组 ──" id="cg-K"><option value="Portugal">🇵🇹 葡萄牙</option><option value="Uzbekistan">🇺🇿 乌兹别克</option><option value="Colombia">🇨🇴 哥伦比亚</option><option value="DR Congo">🇨🇩 刚果DR</option></optgroup>
+    <optgroup label="── L组 ──" id="cg-L"><option value="England">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英格兰</option><option value="Croatia">🇭🇷 克罗地亚</option><option value="Ghana">🇬🇭 加纳</option><option value="Panama">🇵🇦 巴拿马</option></optgroup>
+  </select>
 </div>
 
 <div class="main">
@@ -236,7 +277,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
   <div class="legend-item"><div class="legend-dot" style="background:var(--K)"></div>Gr. K Portugal·Uzbekistan·Colombia·DR Congo</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--L)"></div>Gr. L England·Croatia·Ghana·Panama</div>
 </div>
-
 <!-- ═══════════════ ROUND 1 ═══════════════ -->
 <div class="round-section">
   <div class="round-header">
@@ -587,7 +627,25 @@ const T = {
     'ven-arrowhead':'Arrowhead · 堪萨斯城',
     tznote:'<strong style="color:var(--dim)">时区说明</strong><br>EDT = 东部夏令时 UTC−4 &nbsp;|&nbsp; CDT = 中部夏令时 UTC−5 &nbsp;|&nbsp; PDT = 太平洋夏令时 UTC−7<br>德国 CEST = UTC+2 &nbsp;|&nbsp; 比 EDT +6h，比 CDT +7h，比 PDT +9h',
     dates:{'0611':'6月11日（星期四）','0612':'6月12日（星期五）','0613':'6月13日（星期六）','0614':'6月14日（星期日）','0615':'6月15日（星期一）','0616':'6月16日（星期二）','0617':'6月17日（星期三）','0618':'6月18日（星期四）','0619':'6月19日（星期五）','0620':'6月20日（星期六）','0621':'6月21日（星期日）','0622':'6月22日（星期一）','0623':'6月23日（星期二）','0624':'6月24日（星期三）','0625':'6月25日（星期四）','0626':'6月26日（星期五）','0627':'6月27日（星期六）'},
-    ltimeIdx:0
+    ltimeIdx:0,
+  // Country select
+  countryLabel:'选择国家',
+  cgA:'── A组 ──',cgB:'── B组 ──',cgC:'── C组 ──',cgD:'── D组 ──',
+  cgE:'── E组 ──',cgF:'── F组 ──',cgG:'── G组 ──',cgH:'── H组 ──',
+  cgI:'── I组 ──',cgJ:'── J组 ──',cgK:'── K组 ──',cgL:'── L组 ──',
+  // countries zh
+  cnt_Mexico:'🇲🇽 墨西哥',cnt_SouthAfrica:'🇿🇦 南非',cnt_SouthKorea:'🇰🇷 韩国',cnt_Czechia:'🇨🇿 捷克',
+  cnt_Canada:'🇨🇦 加拿大',cnt_Bosnia:'🇧🇦 波黑',cnt_Qatar:'🇶🇦 卡塔尔',cnt_Switzerland:'🇨🇭 瑞士',
+  cnt_Brazil:'🇧🇷 巴西',cnt_Morocco:'🇲🇦 摩洛哥',cnt_Haiti:'🇭🇹 海地',cnt_Scotland:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 苏格兰',
+  cnt_USA:'🇺🇸 美国',cnt_Paraguay:'🇵🇾 巴拉圭',cnt_Australia:'🇦🇺 澳大利亚',cnt_Turkey:'🇹🇷 土耳其',
+  cnt_Germany:'🇩🇪 德国',cnt_Curacao:'🇨🇼 库拉索',cnt_IvoryCoast:'🇨🇮 科特迪瓦',cnt_Ecuador:'🇪🇨 厄瓜多尔',
+  cnt_Netherlands:'🇳🇱 荷兰',cnt_Japan:'🇯🇵 日本',cnt_Sweden:'🇸🇪 瑞典',cnt_Tunisia:'🇹🇳 突尼斯',
+  cnt_Belgium:'🇧🇪 比利时',cnt_Egypt:'🇪🇬 埃及',cnt_Iran:'🇮🇷 伊朗',cnt_NewZealand:'🇳🇿 新西兰',
+  cnt_Spain:'🇪🇸 西班牙',cnt_CapeVerde:'🇨🇻 佛得角',cnt_SaudiArabia:'🇸🇦 沙特',cnt_Uruguay:'🇺🇾 乌拉圭',
+  cnt_France:'🇫🇷 法国',cnt_Senegal:'🇸🇳 塞内加尔',cnt_Iraq:'🇮🇶 伊拉克',cnt_Norway:'🇳🇴 挪威',
+  cnt_Argentina:'🇦🇷 阿根廷',cnt_Algeria:'🇩🇿 阿尔及利亚',cnt_Austria:'🇦🇹 奥地利',cnt_Jordan:'🇯🇴 约旦',
+  cnt_Portugal:'🇵🇹 葡萄牙',cnt_Uzbekistan:'🇺🇿 乌兹别克',cnt_Colombia:'🇨🇴 哥伦比亚',cnt_DRCongo:'🇨🇩 刚果DR',
+  cnt_England:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 英格兰',cnt_Croatia:'🇭🇷 克罗地亚',cnt_Ghana:'🇬🇭 加纳',cnt_Panama:'🇵🇦 巴拿马',
   },
   en: {
     badge:'⚽ FIFA World Cup 2026',
@@ -615,7 +673,23 @@ const T = {
     'ven-arrowhead':'Arrowhead · Kansas City',
     tznote:'<strong style="color:var(--dim)">Time Zones</strong><br>EDT = Eastern Daylight UTC−4 &nbsp;|&nbsp; CDT = Central Daylight UTC−5 &nbsp;|&nbsp; PDT = Pacific Daylight UTC−7<br>Germany CEST = UTC+2 &nbsp;|&nbsp; EDT +6h · CDT +7h · PDT +9h',
     dates:{'0611':'Jun 11 (Thursday)','0612':'Jun 12 (Friday)','0613':'Jun 13 (Saturday)','0614':'Jun 14 (Sunday)','0615':'Jun 15 (Monday)','0616':'Jun 16 (Tuesday)','0617':'Jun 17 (Wednesday)','0618':'Jun 18 (Thursday)','0619':'Jun 19 (Friday)','0620':'Jun 20 (Saturday)','0621':'Jun 21 (Sunday)','0622':'Jun 22 (Monday)','0623':'Jun 23 (Tuesday)','0624':'Jun 24 (Wednesday)','0625':'Jun 25 (Thursday)','0626':'Jun 26 (Friday)','0627':'Jun 27 (Saturday)'},
-    ltimeIdx:1
+    ltimeIdx:1,
+  countryLabel:'Select Team',
+  cgA:'── Group A ──',cgB:'── Group B ──',cgC:'── Group C ──',cgD:'── Group D ──',
+  cgE:'── Group E ──',cgF:'── Group F ──',cgG:'── Group G ──',cgH:'── Group H ──',
+  cgI:'── Group I ──',cgJ:'── Group J ──',cgK:'── Group K ──',cgL:'── Group L ──',
+  cnt_Mexico:'🇲🇽 Mexico',cnt_SouthAfrica:'🇿🇦 South Africa',cnt_SouthKorea:'🇰🇷 South Korea',cnt_Czechia:'🇨🇿 Czechia',
+  cnt_Canada:'🇨🇦 Canada',cnt_Bosnia:'🇧🇦 Bosnia',cnt_Qatar:'🇶🇦 Qatar',cnt_Switzerland:'🇨🇭 Switzerland',
+  cnt_Brazil:'🇧🇷 Brazil',cnt_Morocco:'🇲🇦 Morocco',cnt_Haiti:'🇭🇹 Haiti',cnt_Scotland:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland',
+  cnt_USA:'🇺🇸 USA',cnt_Paraguay:'🇵🇾 Paraguay',cnt_Australia:'🇦🇺 Australia',cnt_Turkey:'🇹🇷 Türkiye',
+  cnt_Germany:'🇩🇪 Germany',cnt_Curacao:'🇨🇼 Curaçao',cnt_IvoryCoast:'🇨🇮 Ivory Coast',cnt_Ecuador:'🇪🇨 Ecuador',
+  cnt_Netherlands:'🇳🇱 Netherlands',cnt_Japan:'🇯🇵 Japan',cnt_Sweden:'🇸🇪 Sweden',cnt_Tunisia:'🇹🇳 Tunisia',
+  cnt_Belgium:'🇧🇪 Belgium',cnt_Egypt:'🇪🇬 Egypt',cnt_Iran:'🇮🇷 Iran',cnt_NewZealand:'🇳🇿 New Zealand',
+  cnt_Spain:'🇪🇸 Spain',cnt_CapeVerde:'🇨🇻 Cape Verde',cnt_SaudiArabia:'🇸🇦 Saudi Arabia',cnt_Uruguay:'🇺🇾 Uruguay',
+  cnt_France:'🇫🇷 France',cnt_Senegal:'🇸🇳 Senegal',cnt_Iraq:'🇮🇶 Iraq',cnt_Norway:'🇳🇴 Norway',
+  cnt_Argentina:'🇦🇷 Argentina',cnt_Algeria:'🇩🇿 Algeria',cnt_Austria:'🇦🇹 Austria',cnt_Jordan:'🇯🇴 Jordan',
+  cnt_Portugal:'🇵🇹 Portugal',cnt_Uzbekistan:'🇺🇿 Uzbekistan',cnt_Colombia:'🇨🇴 Colombia',cnt_DRCongo:'🇨🇩 DR Congo',
+  cnt_England:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 England',cnt_Croatia:'🇭🇷 Croatia',cnt_Ghana:'🇬🇭 Ghana',cnt_Panama:'🇵🇦 Panama',
   },
   de: {
     badge:'⚽ FIFA WM 2026',
@@ -643,7 +717,23 @@ const T = {
     'ven-arrowhead':'Arrowhead · Kansas City',
     tznote:'<strong style="color:var(--dim)">Zeitzonen</strong><br>EDT = Eastern Daylight UTC−4 &nbsp;|&nbsp; CDT = Central Daylight UTC−5 &nbsp;|&nbsp; PDT = Pacific Daylight UTC−7<br>Deutschland CEST = UTC+2 &nbsp;|&nbsp; EDT +6h · CDT +7h · PDT +9h',
     dates:{'0611':'11. Juni (Donnerstag)','0612':'12. Juni (Freitag)','0613':'13. Juni (Samstag)','0614':'14. Juni (Sonntag)','0615':'15. Juni (Montag)','0616':'16. Juni (Dienstag)','0617':'17. Juni (Mittwoch)','0618':'18. Juni (Donnerstag)','0619':'19. Juni (Freitag)','0620':'20. Juni (Samstag)','0621':'21. Juni (Sonntag)','0622':'22. Juni (Montag)','0623':'23. Juni (Dienstag)','0624':'24. Juni (Mittwoch)','0625':'25. Juni (Donnerstag)','0626':'26. Juni (Freitag)','0627':'27. Juni (Samstag)'},
-    ltimeIdx:2
+    ltimeIdx:2,
+  countryLabel:'Land wählen',
+  cgA:'── Gruppe A ──',cgB:'── Gruppe B ──',cgC:'── Gruppe C ──',cgD:'── Gruppe D ──',
+  cgE:'── Gruppe E ──',cgF:'── Gruppe F ──',cgG:'── Gruppe G ──',cgH:'── Gruppe H ──',
+  cgI:'── Gruppe I ──',cgJ:'── Gruppe J ──',cgK:'── Gruppe K ──',cgL:'── Gruppe L ──',
+  cnt_Mexico:'🇲🇽 Mexiko',cnt_SouthAfrica:'🇿🇦 Südafrika',cnt_SouthKorea:'🇰🇷 Südkorea',cnt_Czechia:'🇨🇿 Tschechien',
+  cnt_Canada:'🇨🇦 Kanada',cnt_Bosnia:'🇧🇦 Bosnien',cnt_Qatar:'🇶🇦 Katar',cnt_Switzerland:'🇨🇭 Schweiz',
+  cnt_Brazil:'🇧🇷 Brasilien',cnt_Morocco:'🇲🇦 Marokko',cnt_Haiti:'🇭🇹 Haiti',cnt_Scotland:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 Schottland',
+  cnt_USA:'🇺🇸 USA',cnt_Paraguay:'🇵🇾 Paraguay',cnt_Australia:'🇦🇺 Australien',cnt_Turkey:'🇹🇷 Türkei',
+  cnt_Germany:'🇩🇪 Deutschland',cnt_Curacao:'🇨🇼 Curaçao',cnt_IvoryCoast:'🇨🇮 Elfenbeinküste',cnt_Ecuador:'🇪🇨 Ecuador',
+  cnt_Netherlands:'🇳🇱 Niederlande',cnt_Japan:'🇯🇵 Japan',cnt_Sweden:'🇸🇪 Schweden',cnt_Tunisia:'🇹🇳 Tunesien',
+  cnt_Belgium:'🇧🇪 Belgien',cnt_Egypt:'🇪🇬 Ägypten',cnt_Iran:'🇮🇷 Iran',cnt_NewZealand:'🇳🇿 Neuseeland',
+  cnt_Spain:'🇪🇸 Spanien',cnt_CapeVerde:'🇨🇻 Kap Verde',cnt_SaudiArabia:'🇸🇦 Saudi-Arabien',cnt_Uruguay:'🇺🇾 Uruguay',
+  cnt_France:'🇫🇷 Frankreich',cnt_Senegal:'🇸🇳 Senegal',cnt_Iraq:'🇮🇶 Irak',cnt_Norway:'🇳🇴 Norwegen',
+  cnt_Argentina:'🇦🇷 Argentinien',cnt_Algeria:'🇩🇿 Algerien',cnt_Austria:'🇦🇹 Österreich',cnt_Jordan:'🇯🇴 Jordanien',
+  cnt_Portugal:'🇵🇹 Portugal',cnt_Uzbekistan:'🇺🇿 Usbekistan',cnt_Colombia:'🇨🇴 Kolumbien',cnt_DRCongo:'🇨🇩 Kongo DR',
+  cnt_England:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 England',cnt_Croatia:'🇭🇷 Kroatien',cnt_Ghana:'🇬🇭 Ghana',cnt_Panama:'🇵🇦 Panama',
   }
 };
 
@@ -798,6 +888,8 @@ function setLang(lang, btn) {
   document.getElementById('label-tz').textContent = lang==='zh'?'时区':lang==='de'?'Zeitzone':'Timezone';
   // update tz select options labels
   updateTZSelectLabels(lang);
+  updateCountrySelect(lang);
+  updateStandingsLang(lang);
   refreshConvertedTimes();
 }
 
@@ -837,18 +929,128 @@ function updateTZSelectLabels(lang) {
 }
 
 function filterGroup(g, btn) {
+  // Reset country select
+  const csel = document.getElementById('country-select');
+  if(csel) csel.value = '';
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.match-row').forEach(row => {
     row.classList.toggle('hidden', g !== 'ALL' && row.dataset.g !== g);
   });
+  // 点击具体小组时弹出积分榜
+  if(g !== 'ALL' && STANDINGS[g]) {
+    openStandings(g);
+  } else {
+    document.getElementById('standings-modal').classList.remove('open');
+  }
 }
 
-// ── Boot ──
+// ── Country filter ──
+const TEAM_GROUP = {
+  'Mexico':'A','South Africa':'A','South Korea':'A','Czechia':'A',
+  'Canada':'B','Bosnia':'B','Qatar':'B','Switzerland':'B',
+  'Brazil':'C','Morocco':'C','Haiti':'C','Scotland':'C',
+  'USA':'D','Paraguay':'D','Australia':'D','Turkey':'D',
+  'Germany':'E','Curacao':'E','Ivory Coast':'E','Ecuador':'E',
+  'Netherlands':'F','Japan':'F','Sweden':'F','Tunisia':'F',
+  'Belgium':'G','Egypt':'G','Iran':'G','New Zealand':'G',
+  'Spain':'H','Cape Verde':'H','Saudi Arabia':'H','Uruguay':'H',
+  'France':'I','Senegal':'I','Iraq':'I','Norway':'I',
+  'Argentina':'J','Algeria':'J','Austria':'J','Jordan':'J',
+  'Portugal':'K','Uzbekistan':'K','Colombia':'K','DR Congo':'K',
+  'England':'L','Croatia':'L','Ghana':'L','Panama':'L',
+};
+
+function filterCountry(team) {
+  const sel = document.getElementById('country-select');
+  if(!team) {
+    // Reset to ALL
+    const allBtn = document.querySelector('.filter-btn[data-g="ALL"]');
+    filterGroup('ALL', allBtn);
+    return;
+  }
+
+  // Deactivate group buttons
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+
+  // Show only rows where this team plays
+  const normT = s => s.toLowerCase().replace(/[^a-z]/g,'');
+  const nt = normT(team);
+  document.querySelectorAll('.match-row[data-teams]').forEach(row => {
+    const [t1, t2] = row.dataset.teams.split(',');
+    const match = normT(t1).includes(nt) || nt.includes(normT(t1)) ||
+                  normT(t2).includes(nt) || nt.includes(normT(t2));
+    row.classList.toggle('hidden', !match);
+  });
+
+  // Open standings for the group this team belongs to
+  const grp = TEAM_GROUP[team];
+  if(grp) openStandings(grp);
+}
+
+// Reset country select when group button clicked
+const _origFilterGroup = filterGroup;
+
+// Country select option value -> translation key map
+const CNT_KEY = {
+  'Mexico':'cnt_Mexico','South Africa':'cnt_SouthAfrica','South Korea':'cnt_SouthKorea','Czechia':'cnt_Czechia',
+  'Canada':'cnt_Canada','Bosnia':'cnt_Bosnia','Qatar':'cnt_Qatar','Switzerland':'cnt_Switzerland',
+  'Brazil':'cnt_Brazil','Morocco':'cnt_Morocco','Haiti':'cnt_Haiti','Scotland':'cnt_Scotland',
+  'USA':'cnt_USA','Paraguay':'cnt_Paraguay','Australia':'cnt_Australia','Turkey':'cnt_Turkey',
+  'Germany':'cnt_Germany','Curacao':'cnt_Curacao','Ivory Coast':'cnt_IvoryCoast','Ecuador':'cnt_Ecuador',
+  'Netherlands':'cnt_Netherlands','Japan':'cnt_Japan','Sweden':'cnt_Sweden','Tunisia':'cnt_Tunisia',
+  'Belgium':'cnt_Belgium','Egypt':'cnt_Egypt','Iran':'cnt_Iran','New Zealand':'cnt_NewZealand',
+  'Spain':'cnt_Spain','Cape Verde':'cnt_CapeVerde','Saudi Arabia':'cnt_SaudiArabia','Uruguay':'cnt_Uruguay',
+  'France':'cnt_France','Senegal':'cnt_Senegal','Iraq':'cnt_Iraq','Norway':'cnt_Norway',
+  'Argentina':'cnt_Argentina','Algeria':'cnt_Algeria','Austria':'cnt_Austria','Jordan':'cnt_Jordan',
+  'Portugal':'cnt_Portugal','Uzbekistan':'cnt_Uzbekistan','Colombia':'cnt_Colombia','DR Congo':'cnt_DRCongo',
+  'England':'cnt_England','Croatia':'cnt_Croatia','Ghana':'cnt_Ghana','Panama':'cnt_Panama',
+};
+
+function updateCountrySelect(lang) {
+  const t = T[lang];
+  const sel = document.getElementById('country-select');
+  if(!sel) return;
+  const ph = document.getElementById('country-placeholder');
+  if(ph) ph.textContent = '🌍 ' + (t.countryLabel || 'Select Team');
+  ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(g => {
+    const og = document.getElementById('cg-'+g);
+    if(og && t['cg'+g]) og.label = t['cg'+g];
+  });
+  sel.querySelectorAll('option[value]').forEach(opt => {
+    if(!opt.value) return;
+    const key = CNT_KEY[opt.value];
+    if(key && t[key]) opt.textContent = t[key];
+  });
+}
+
+function updateStandingsLang(lang) {
+  const headers = {
+    zh: {team:'球队', played:'场', w:'胜', d:'平', l:'负', gf:'进', ga:'失', pts:'积分'},
+    de: {team:'Team', played:'Sp', w:'S',  d:'U',  l:'N',  gf:'T+', ga:'T-', pts:'Pkt'},
+    en: {team:'Team', played:'P',  w:'W',  d:'D',  l:'L',  gf:'GF', ga:'GA', pts:'Pts'},
+  };
+  const h = headers[lang] || headers.en;
+  const ids = ['team','played','w','d','l','gf','ga','pts'];
+  ids.forEach(id => {
+    const el = document.getElementById('th-'+id);
+    if(el) el.textContent = h[id];
+  });
+  const note = document.getElementById('modal-note');
+  if(note) note.textContent = MODAL_NOTE[lang] || '';
+  const title = document.getElementById('modal-title');
+  if(title && document.getElementById('standings-modal').classList.contains('open')) {
+    const grpKey = title.dataset.grp;
+    if(grpKey) title.textContent = GROUP_NAMES[lang](grpKey) + (lang==='zh'?' 积分榜':lang==='de'?' Tabelle':' Standings');
+  }
+}
+
 document.querySelectorAll('[data-ltime]').forEach(el => {
   el.textContent = el.dataset.ltime.split('|')[0];
 });
 refreshConvertedTimes();
+updateCountrySelect(currentLang);
+updateStandingsLang(currentLang);
 
 // ══════════════════════════════════════════
 // 读取 scores.json 显示比分
@@ -954,6 +1156,229 @@ if(topBar) {
 // 页面加载时读取，之后每5分钟刷新一次
 loadScores();
 setInterval(loadScores, 5 * 60 * 1000);
+
+// ══════════════════════════════════════════
+// 小组积分榜数据
+// ══════════════════════════════════════════
+const STANDINGS = {
+  A: [
+    {key:'cnt_Mexico',      flag:'🇲🇽', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_SouthKorea',  flag:'🇰🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_SouthAfrica', flag:'🇿🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Czechia',     flag:'🇨🇿', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  B: [
+    {key:'cnt_Canada',      flag:'🇨🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Switzerland', flag:'🇨🇭', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Bosnia',      flag:'🇧🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Qatar',       flag:'🇶🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  C: [
+    {key:'cnt_Brazil',      flag:'🇧🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Morocco',     flag:'🇲🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Scotland',    flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Haiti',       flag:'🇭🇹', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  D: [
+    {key:'cnt_USA',         flag:'🇺🇸', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Turkey',      flag:'🇹🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Australia',   flag:'🇦🇺', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Paraguay',    flag:'🇵🇾', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  E: [
+    {key:'cnt_Germany',     flag:'🇩🇪', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_IvoryCoast',  flag:'🇨🇮', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Ecuador',     flag:'🇪🇨', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Curacao',     flag:'🇨🇼', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  F: [
+    {key:'cnt_Netherlands', flag:'🇳🇱', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Japan',       flag:'🇯🇵', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Sweden',      flag:'🇸🇪', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Tunisia',     flag:'🇹🇳', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  G: [
+    {key:'cnt_Belgium',     flag:'🇧🇪', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Iran',        flag:'🇮🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_NewZealand',  flag:'🇳🇿', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Egypt',       flag:'🇪🇬', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  H: [
+    {key:'cnt_Spain',       flag:'🇪🇸', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Uruguay',     flag:'🇺🇾', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_SaudiArabia', flag:'🇸🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_CapeVerde',   flag:'🇨🇻', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  I: [
+    {key:'cnt_France',      flag:'🇫🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Norway',      flag:'🇳🇴', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Senegal',     flag:'🇸🇳', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Iraq',        flag:'🇮🇶', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  J: [
+    {key:'cnt_Argentina',   flag:'🇦🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Austria',     flag:'🇦🇹', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Algeria',     flag:'🇩🇿', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Jordan',      flag:'🇯🇴', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  K: [
+    {key:'cnt_Portugal',    flag:'🇵🇹', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Colombia',    flag:'🇨🇴', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Uzbekistan',  flag:'🇺🇿', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_DRCongo',     flag:'🇨🇩', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+  L: [
+    {key:'cnt_England',     flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Croatia',     flag:'🇭🇷', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Ghana',       flag:'🇬🇭', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+    {key:'cnt_Panama',      flag:'🇵🇦', w:0,d:0,l:0,gf:0,ga:0,pts:0},
+  ],
+};
+
+const GROUP_NAMES = {
+  zh: g => g+'组', de: g => 'Gruppe '+g, en: g => 'Group '+g
+};
+const TH_TEAM = { zh:'球队', de:'Team', en:'Team' };
+const TH_PTS  = { zh:'积分', de:'Pkt', en:'Pts' };
+const MODAL_NOTE = {
+  zh:'前2名直接晋级 · 第3名参与最佳第三名排名',
+  de:'Top 2 qualifiziert · Platz 3 im Vergleich aller Gruppen',
+  en:'Top 2 qualify · 3rd place enters best 3rd ranking'
+};
+
+function openStandings(groupKey) {
+  const data = STANDINGS[groupKey];
+  if(!data) return;
+
+  // Try to update from scores.json scores already applied to DOM
+  // Recalculate from match scores in the page
+  recalcStandings(groupKey);
+
+  const sorted = [...STANDINGS[groupKey]].sort((a,b) => {
+    if(b.pts !== a.pts) return b.pts - a.pts;
+    const gdA = a.gf - a.ga, gdB = b.gf - b.ga;
+    if(gdB !== gdA) return gdB - gdA;
+    return b.gf - a.gf;
+  });
+
+  const lang = currentLang;
+  const _mt = document.getElementById('modal-title'); _mt.dataset.grp = groupKey; _mt.textContent = GROUP_NAMES[lang](groupKey) + (lang==='zh'?' 积分榜':lang==='de'?' Tabelle':' Standings');
+  document.getElementById('th-team').textContent = TH_TEAM[lang];
+  document.getElementById('th-pts').textContent  = TH_PTS[lang];
+  document.getElementById('modal-note').textContent = MODAL_NOTE[lang];
+
+  const tbody = document.getElementById('standings-body');
+  tbody.innerHTML = sorted.map((t,i) => {
+    const gd = (t.gf - t.ga > 0 ? '+' : '') + (t.gf - t.ga);
+    const played = t.w + t.d + t.l;
+    const isQ = i < 2;
+    // Get translated team name (strip emoji prefix)
+    const raw = T[lang][t.key] || T['zh'][t.key] || t.key;
+    const tname = raw.replace(/^\S+\s/, '');
+    return `<tr class="${isQ?'qualified':''}">
+      <td><span class="rank-num ${isQ?'q'+(i+1):''}">${i+1}</span></td>
+      <td><span class="team-name">${t.flag} ${tname}</span></td>
+      <td>${played}</td>
+      <td>${t.w}</td>
+      <td>${t.d}</td>
+      <td>${t.l}</td>
+      <td>${t.gf}</td>
+      <td>${t.ga}</td>
+      <td>${gd}</td>
+      <td><span class="pts">${t.pts}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('standings-modal').classList.add('open');
+}
+
+function recalcStandings(groupKey) {
+  // Reset
+  STANDINGS[groupKey].forEach(t => { t.w=0;t.d=0;t.l=0;t.gf=0;t.ga=0;t.pts=0; });
+
+  // Find all match rows for this group
+  document.querySelectorAll(`.match-row[data-g="${groupKey}"][data-teams]`).forEach(row => {
+    const scoreEl = row.querySelector('.score');
+    if(!scoreEl) return;
+    const txt = scoreEl.textContent.trim();
+    if(txt === '-:-' || txt === '') return;
+
+    const [t1name, t2name] = row.dataset.teams.split(',');
+    const parts = txt.split('-').map(s => parseInt(s.trim()));
+    if(parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return;
+
+    const [g1, g2] = parts;
+
+    // Find teams in standings
+    const normT = s => s.toLowerCase().replace(/[^a-z]/g,'');
+    const getTeamName = t => (T['zh'][t.key]||'').replace(/^\S+\s/,'');
+    const team1 = STANDINGS[groupKey].find(t => { const n=normT(getTeamName(t)); return n===normT(t1name)||normT(t1name).includes(n)||n.includes(normT(t1name)); });
+    const team2 = STANDINGS[groupKey].find(t => { const n=normT(getTeamName(t)); return n===normT(t2name)||normT(t2name).includes(n)||n.includes(normT(t2name)); });
+
+    if(!team1 || !team2) return;
+
+    team1.gf += g1; team1.ga += g2;
+    team2.gf += g2; team2.ga += g1;
+
+    if(g1 > g2)      { team1.w++; team1.pts+=3; team2.l++; }
+    else if(g1 < g2) { team2.w++; team2.pts+=3; team1.l++; }
+    else             { team1.d++; team1.pts+=1; team2.d++; team2.pts+=1; }
+  });
+}
+
+function closeModal(e) {
+  if(e.target === document.getElementById('standings-modal')) {
+    document.getElementById('standings-modal').classList.remove('open');
+  }
+}
+
+// ESC to close
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') document.getElementById('standings-modal').classList.remove('open');
+});
+
+// Add onclick to all group badges
+document.querySelectorAll('.group-badge[data-i18n]').forEach(badge => {
+  const key = badge.dataset.i18n; // ga, gb, gc...
+  const groupMap = {ga:'A',gb:'B',gc:'C',gd:'D',ge:'E',gf_:'F',gg:'G',gh:'H',gi:'I',gj:'J',gk:'K',gl:'L'};
+  // data-i18n values: ga=A, gb=B... gf=F (note: gf conflicts with goals-for, use the badge's text)
+  const gLetter = badge.textContent.trim().replace(/组|Gr\.? ?|Group ?/g,'').charAt(0);
+  if(gLetter && STANDINGS[gLetter]) {
+    badge.onclick = () => openStandings(gLetter);
+    badge.title = '点击查看积分榜';
+  }
+});
+
 </script>
+
+<!-- Standings Modal -->
+<div class="modal-overlay" id="standings-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">A组 积分榜</div>
+      <button class="modal-close" onclick="document.getElementById('standings-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th id="th-team">球队</th>
+            <th id="th-played">场</th>
+            <th id="th-w">胜</th>
+            <th id="th-d">平</th>
+            <th id="th-l">负</th>
+            <th id="th-gf">进</th>
+            <th id="th-ga">失</th>
+            <th>+/-</th>
+            <th id="th-pts">积分</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
+      <div class="modal-note" id="modal-note">前2名直接晋级，第3名参与附加赛排名</div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
