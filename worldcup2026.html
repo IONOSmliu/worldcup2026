@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 FIFA World Cup · Group Stage Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10; --surface: #111318; --surface2: #181b22;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.14);
+  --gold: #c9a84c; --gold2: #e8c96a; --text: #eef0f4; --muted: #6b7280; --dim: #9ca3af;
+  --A:#3b7dd8;--Ab:rgba(59,125,216,0.12); --B:#3aad74;--Bb:rgba(58,173,116,0.12);
+  --C:#e05c3a;--Cb:rgba(224,92,58,0.12);  --D:#d4a017;--Db:rgba(212,160,23,0.12);
+  --E:#9b59b6;--Eb:rgba(155,89,182,0.12); --F:#e0445c;--Fb:rgba(224,68,92,0.12);
+  --G:#2dc8c8;--Gb:rgba(45,200,200,0.12); --H:#e87e22;--Hb:rgba(232,126,34,0.12);
+  --I:#5b8af0;--Ib:rgba(91,138,240,0.12); --J:#45c97a;--Jb:rgba(69,201,122,0.12);
+  --K:#d44e9b;--Kb:rgba(212,78,155,0.12); --L:#f5c842;--Lb:rgba(245,200,66,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+
+/* TOP BAR */
+.top-bar{display:flex;justify-content:flex-end;align-items:center;padding:10px 20px 0;gap:12px;flex-wrap:wrap;position:relative;z-index:200}
+.lang-group,.tz-group{display:flex;gap:4px;align-items:center}
+.bar-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-right:4px}
+.lang-btn{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;padding:4px 12px;border-radius:3px;border:1px solid var(--border2);background:transparent;color:var(--dim);cursor:pointer;transition:all .15s}
+.lang-btn:hover{border-color:var(--gold);color:var(--gold)}
+.lang-btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.tz-sep{width:1px;height:18px;background:var(--border2);margin:0 4px}
+.tz-select{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.06em;padding:4px 28px 4px 10px;border-radius:3px;border:1px solid var(--border2);background:var(--surface);color:var(--dim);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;outline:none;transition:all .15s}
+.tz-select:hover,.tz-select:focus{border-color:var(--gold);color:var(--gold)}
+/* highlight converted time column */
+.col-conv .time-main{color:var(--gold2)}
+.col-conv .time-sub{color:var(--gold)}
+
+/* HERO */
+.hero{position:relative;padding:48px 24px 48px;text-align:center;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,0.12) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 20% 80%,rgba(59,125,216,0.08) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(224,68,92,0.07) 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:100px;padding:5px 16px;font-size:11px;letter-spacing:0.12em;color:var(--gold2);text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:'Oswald',sans-serif;font-size:clamp(30px,6vw,60px);font-weight:700;letter-spacing:0.04em;line-height:1.1;color:#fff}
+.hero h1 span{color:var(--gold)}
+.hero-sub{margin-top:12px;font-size:14px;color:var(--dim);letter-spacing:0.05em}
+.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:32px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-num{font-family:'Oswald',sans-serif;font-size:28px;font-weight:600;color:var(--gold)}
+.stat-label{font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+.hero-line{width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:32px auto 0}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;justify-content:center;position:sticky;top:0;z-index:100;background:rgba(10,12,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.filter-btn{font-family:'Oswald',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.06em;padding:5px 14px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--dim);cursor:pointer;transition:all .18s}
+.filter-btn:hover{border-color:var(--gold);color:var(--gold)}
+.filter-btn.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.filter-btn[data-g="A"].active{background:var(--A);border-color:var(--A);color:#fff}
+.filter-btn[data-g="B"].active{background:var(--B);border-color:var(--B);color:#fff}
+.filter-btn[data-g="C"].active{background:var(--C);border-color:var(--C);color:#fff}
+.filter-btn[data-g="D"].active{background:var(--D);border-color:var(--D);color:#fff}
+.filter-btn[data-g="E"].active{background:var(--E);border-color:var(--E);color:#fff}
+.filter-btn[data-g="F"].active{background:var(--F);border-color:var(--F);color:#fff}
+.filter-btn[data-g="G"].active{background:var(--G);border-color:var(--G);color:#fff}
+.filter-btn[data-g="H"].active{background:var(--H);border-color:var(--H);color:#fff}
+.filter-btn[data-g="I"].active{background:var(--I);border-color:var(--I);color:#fff}
+.filter-btn[data-g="J"].active{background:var(--J);border-color:var(--J);color:#fff}
+.filter-btn[data-g="K"].active{background:var(--K);border-color:var(--K);color:#fff}
+.filter-btn[data-g="L"].active{background:var(--L);border-color:var(--L);color:#111}
+
+.main{max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+.round-section{margin-bottom:48px}
+.round-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.round-num{font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;border-radius:3px}
+.round-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--text)}
+.round-line{flex:1;height:1px;background:var(--border)}
+.date-label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:10px 16px 6px;font-weight:400}
+.schedule-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.schedule-table thead tr{background:var(--surface2)}
+.schedule-table th{font-family:'Oswald',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.schedule-table th.center{text-align:center}
+.match-row{background:var(--surface);border-bottom:1px solid var(--border);transition:background .15s}
+.match-row:last-child{border-bottom:none}
+.match-row:hover{background:var(--surface2)}
+.match-row.hidden{display:none}
+.match-row td{padding:12px 14px;vertical-align:middle;font-size:13px}
+.group-badge{font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;padding:3px 9px;border-radius:3px;display:inline-block;white-space:nowrap}
+.match-teams{display:flex;align-items:center;gap:8px;min-width:200px}
+.team{font-weight:400;font-size:14px;color:var(--text)}
+.vs-sep{font-family:'Oswald',sans-serif;font-size:10px;color:var(--muted);letter-spacing:0.06em;flex-shrink:0}
+.score-wrap{text-align:center}
+.score{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:3px 10px;display:inline-block;letter-spacing:0.04em;color:var(--dim);min-width:44px;text-align:center}
+.time-cell{min-width:130px}
+.time-main{font-family:'Oswald',sans-serif;font-size:14px;font-weight:400;color:var(--text);letter-spacing:0.02em}
+.time-sub{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:0.04em}
+.de-time{font-family:'Oswald',sans-serif;font-size:14px;color:var(--dim);letter-spacing:0.02em}
+.simul{font-size:9px;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25);border-radius:3px;padding:1px 5px;letter-spacing:0.06em;margin-left:4px;vertical-align:middle}
+.legend{display:flex;flex-wrap:wrap;gap:8px;padding:0 0 32px;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.tz-note{text-align:center;font-size:11px;color:var(--muted);line-height:1.8;padding:20px;border:1px solid var(--border);border-radius:6px;background:var(--surface);margin-top:24px}
+
+@media(max-width:700px){
+  .schedule-table th:nth-child(5),.match-row td:nth-child(5){display:none}
+  .match-teams{min-width:0}
+  .hero-stats{gap:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="lang-group">
+    <span class="bar-label" id="label-lang">语言</span>
+    <button class="lang-btn active" onclick="setLang('zh',this)">中文</button>
+    <button class="lang-btn" onclick="setLang('de',this)">Deutsch</button>
+    <button class="lang-btn" onclick="setLang('en',this)">English</button>
+  </div>
+  <div class="tz-sep"></div>
+  <div class="tz-group">
+    <span class="bar-label" id="label-tz">时区</span>
+    <select class="tz-select" id="tz-select" onchange="setTZ(this.value)">
+      <option value="local">📍 当地时间</option>
+      <optgroup label="── 亚洲 ──">
+        <option value="+8">北京 / 上海 UTC+8</option>
+        <option value="+9">东京 / 首尔 UTC+9</option>
+        <option value="+5.5">新德里 UTC+5:30</option>
+        <option value="+7">曼谷 / 雅加达 UTC+7</option>
+        <option value="+8">新加坡 UTC+8</option>
+      </optgroup>
+      <optgroup label="── 欧洲 ──">
+        <option value="+2" selected>柏林 / 巴黎 CEST UTC+2</option>
+        <option value="+1">伦敦 BST UTC+1</option>
+        <option value="+3">莫斯科 UTC+3</option>
+      </optgroup>
+      <optgroup label="── 美洲 ──">
+        <option value="-4">纽约 EDT UTC-4</option>
+        <option value="-5">芝加哥 CDT UTC-5</option>
+        <option value="-6">墨西哥城 CDT UTC-6</option>
+        <option value="-7">洛杉矶 PDT UTC-7</option>
+        <option value="-3">圣保罗 BRT UTC-3</option>
+      </optgroup>
+      <optgroup label="── 大洋洲 ──">
+        <option value="+10">悉尼 AEST UTC+10</option>
+        <option value="+12">奥克兰 NZST UTC+12</option>
+      </optgroup>
+      <optgroup label="── 非洲/中东 ──">
+        <option value="+3">迪拜 / 利雅得 UTC+3</option>
+        <option value="+2">开罗 EET UTC+2</option>
+        <option value="0">阿克拉 / 达喀尔 UTC+0</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge" data-i18n="badge">⚽ FIFA World Cup 2026</div>
+  <h1 data-i18n="h1zh" style="display:block">美加墨<span> 世界杯</span><br>小组赛程</h1>
+  <h1 data-i18n="h1de" style="display:none">WM 2026<br><span>Gruppenphase</span></h1>
+  <h1 data-i18n="h1en" style="display:none">2026 World Cup<br><span>Group Stage</span></h1>
+  <div class="hero-sub" data-i18n="sub">2026年6月11日 — 6月27日 &nbsp;·&nbsp; 美国 / 加拿大 / 墨西哥</div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">48</div><div class="stat-label" data-i18n="s1">参赛队伍</div></div>
+    <div class="stat"><div class="stat-num">12</div><div class="stat-label" data-i18n="s2">小组</div></div>
+    <div class="stat"><div class="stat-num">36</div><div class="stat-label" data-i18n="s3">小组赛场次</div></div>
+    <div class="stat"><div class="stat-num">16</div><div class="stat-label" data-i18n="s4">举办城市</div></div>
+  </div>
+  <div class="hero-line"></div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-g="ALL" onclick="filterGroup('ALL',this)" data-i18n="all">全部</button>
+  <button class="filter-btn" data-g="A" onclick="filterGroup('A',this)">A</button>
+  <button class="filter-btn" data-g="B" onclick="filterGroup('B',this)">B</button>
+  <button class="filter-btn" data-g="C" onclick="filterGroup('C',this)">C</button>
+  <button class="filter-btn" data-g="D" onclick="filterGroup('D',this)">D</button>
+  <button class="filter-btn" data-g="E" onclick="filterGroup('E',this)">E</button>
+  <button class="filter-btn" data-g="F" onclick="filterGroup('F',this)">F</button>
+  <button class="filter-btn" data-g="G" onclick="filterGroup('G',this)">G</button>
+  <button class="filter-btn" data-g="H" onclick="filterGroup('H',this)">H</button>
+  <button class="filter-btn" data-g="I" onclick="filterGroup('I',this)">I</button>
+  <button class="filter-btn" data-g="J" onclick="filterGroup('J',this)">J</button>
+  <button class="filter-btn" data-g="K" onclick="filterGroup('K',this)">K</button>
+  <button class="filter-btn" data-g="L" onclick="filterGroup('L',this)">L</button>
+</div>
+
+<div class="main">
+<!-- LEGEND -->
+<div class="legend" id="legend-zh">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--A)"></div>A组 墨西哥·南非·韩国·捷克</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--B)"></div>B组 加拿大·波黑·卡塔尔·瑞士</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--C)"></div>C组 巴西·摩洛哥·海地·苏格兰</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--D)"></div>D组 美国·巴拉圭·澳大利亚·土耳其</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--E)"></div>E组 德国·库拉索·科特迪瓦·厄瓜多尔</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--F)"></div>F组 荷兰·日本·突尼斯·瑞典</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--G)"></div>G组 比利时·埃及·伊朗·新西兰</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--H)"></div>H组 西班牙·佛得角·沙特·乌拉圭</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--I)"></div>I组 法国·塞内加尔·伊拉克·挪威</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--J)"></div>J组 阿根廷·阿尔及利亚·奥地利·约旦</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--K)"></div>K组 葡萄牙·乌兹别克·哥伦比亚·刚果DR</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--L)"></div>L组 英格兰·克罗地亚·加纳·巴拿马</div>
+</div>
+<div class="legend" id="legend-de" style="display:none">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--A)"></div>Gr. A Mexiko·Südafrika·Südkorea·Tschechien</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--B)"></div>Gr. B Kanada·Bosnien·Katar·Schweiz</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--C)"></div>Gr. C Brasilien·Marokko·Haiti·Schottland</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--D)"></div>Gr. D USA·Paraguay·Australien·Türkei</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--E)"></div>Gr. E Deutschland·Curaçao·Elfenbeinküste·Ecuador</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--F)"></div>Gr. F Niederlande·Japan·Tunesien·Schweden</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--G)"></div>Gr. G Belgien·Ägypten·Iran·Neuseeland</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--H)"></div>Gr. H Spanien·Kap Verde·Saudi-Arabien·Uruguay</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--I)"></div>Gr. I Frankreich·Senegal·Irak·Norwegen</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--J)"></div>Gr. J Argentinien·Algerien·Österreich·Jordanien</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--K)"></div>Gr. K Portugal·Usbekistan·Kolumbien·Kongo DR</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--L)"></div>Gr. L England·Kroatien·Ghana·Panama</div>
+</div>
+<div class="legend" id="legend-en" style="display:none">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--A)"></div>Gr. A Mexico·South Africa·South Korea·Czechia</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--B)"></div>Gr. B Canada·Bosnia·Qatar·Switzerland</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--C)"></div>Gr. C Brazil·Morocco·Haiti·Scotland</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--D)"></div>Gr. D USA·Paraguay·Australia·Türkiye</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--E)"></div>Gr. E Germany·Curaçao·Ivory Coast·Ecuador</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--F)"></div>Gr. F Netherlands·Japan·Tunisia·Sweden</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--G)"></div>Gr. G Belgium·Egypt·Iran·New Zealand</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--H)"></div>Gr. H Spain·Cape Verde·Saudi Arabia·Uruguay</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--I)"></div>Gr. I France·Senegal·Iraq·Norway</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--J)"></div>Gr. J Argentina·Algeria·Austria·Jordan</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--K)"></div>Gr. K Portugal·Uzbekistan·Colombia·DR Congo</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--L)"></div>Gr. L England·Croatia·Ghana·Panama</div>
+</div>
+
+<!-- ═══════════════ ROUND 1 ═══════════════ -->
+<div class="round-section">
+  <div class="round-header">
+    <div class="round-num" data-i18n="r1tag">第一轮</div>
+    <div class="round-title" data-i18n="r1title">小组赛 · 第一场</div>
+    <div class="round-line"></div>
+  </div>
+  <table class="schedule-table">
+    <thead><tr>
+      <th style="width:68px" data-i18n="thgroup">小组</th>
+      <th data-i18n="thmatch">对阵</th>
+      <th class="center" style="width:64px" data-i18n="thscore">比分</th>
+      <th style="width:154px" data-i18n="thlocal">当地时间</th>
+      <th style="width:154px" data-i18n="thde">德国时间</th>
+    </tr></thead>
+    <tbody>
+
+<!-- helpers: gb(g,label) = group badge, row structure = group | teams | score | local | de -->
+
+<tr><td colspan="5"><div class="date-label" data-date="0611">6月11日（星期四）</div></td></tr>
+<tr class="match-row" data-g="A">
+  <td><span class="group-badge" style="background:var(--Ab);color:var(--A);border:1px solid rgba(59,125,216,0.3)" data-i18n="ga">A组</span></td>
+  <td><div class="match-teams"><span class="team">🇲🇽 <span data-i18n="mex">墨西哥</span></span><span class="vs-sep">VS</span><span class="team">🇿🇦 <span data-i18n="rsa">南非</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-azteca">阿兹特克球场 · 墨西哥城</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(四)11日 15:00|Jun (Thu) 11, 15:00|11. Jun (Do.) 15:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,11,15,0,CDT" data-localfmt="6月(四)11日 15:00">6月11日(四) 22:00</span></td>
+</tr>
+<tr class="match-row" data-g="A">
+  <td><span class="group-badge" style="background:var(--Ab);color:var(--A);border:1px solid rgba(59,125,216,0.3)" data-i18n="ga">A组</span></td>
+  <td><div class="match-teams"><span class="team">🇰🇷 <span data-i18n="kor">韩国</span></span><span class="vs-sep">VS</span><span class="team">🇨🇿 <span data-i18n="cze">捷克</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-akron">Estadio Akron · 瓦哈卡</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(四)11日 22:00|Jun (Thu) 11, 22:00|11. Jun (Do.) 22:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,11,22,0,CDT" data-localfmt="6月(四)11日 22:00">6月12日(五) 05:00</span></td>
+</tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0612">6月12日（星期五）</div></td></tr>
+<tr class="match-row" data-g="B">
+  <td><span class="group-badge" style="background:var(--Bb);color:var(--B);border:1px solid rgba(58,173,116,0.3)" data-i18n="gb">B组</span></td>
+  <td><div class="match-teams"><span class="team">🇨🇦 <span data-i18n="can">加拿大</span></span><span class="vs-sep">VS</span><span class="team">🇧🇦 <span data-i18n="bih">波黑</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bmo">BMO Field · 多伦多</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(五)12日 15:00|Jun (Fri) 12, 15:00|12. Jun (Fr.) 15:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,12,15,0,EDT" data-localfmt="6月(五)12日 15:00">6月12日(五) 21:00</span></td>
+</tr>
+<tr class="match-row" data-g="D">
+  <td><span class="group-badge" style="background:var(--Db);color:var(--D);border:1px solid rgba(212,160,23,0.3)" data-i18n="gd">D组</span></td>
+  <td><div class="match-teams"><span class="team">🇺🇸 <span data-i18n="usa">美国</span></span><span class="vs-sep">VS</span><span class="team">🇵🇾 <span data-i18n="par">巴拉圭</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-sofi">SoFi Stadium · 洛杉矶</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(五)12日 21:00|Jun (Fri) 12, 21:00|12. Jun (Fr.) 21:00"></div><div class="time-sub">PDT</div></td>
+  <td><span class="de-time" data-match="6,12,21,0,PDT" data-localfmt="6月(五)12日 21:00">6月13日(六) 06:00</span></td>
+</tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0613">6月13日（星期六）</div></td></tr>
+<tr class="match-row" data-g="B">
+  <td><span class="group-badge" style="background:var(--Bb);color:var(--B);border:1px solid rgba(58,173,116,0.3)" data-i18n="gb">B组</span></td>
+  <td><div class="match-teams"><span class="team">🇶🇦 <span data-i18n="qat">卡塔尔</span></span><span class="vs-sep">VS</span><span class="team">🇨🇭 <span data-i18n="sui">瑞士</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-levis">Levi's Stadium · 圣克拉拉</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(六)13日 15:00|Jun (Sat) 13, 15:00|13. Jun (Sa.) 15:00"></div><div class="time-sub">PDT</div></td>
+  <td><span class="de-time" data-match="6,13,15,0,PDT" data-localfmt="6月(六)13日 15:00">6月14日(日) 00:00</span></td>
+</tr>
+<tr class="match-row" data-g="C">
+  <td><span class="group-badge" style="background:var(--Cb);color:var(--C);border:1px solid rgba(224,92,58,0.3)" data-i18n="gc">C组</span></td>
+  <td><div class="match-teams"><span class="team">🇧🇷 <span data-i18n="bra">巴西</span></span><span class="vs-sep">VS</span><span class="team">🇲🇦 <span data-i18n="mar">摩洛哥</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-metlife">MetLife Stadium · 新泽西</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(六)13日 18:00|Jun (Sat) 13, 18:00|13. Jun (Sa.) 18:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,13,18,0,EDT" data-localfmt="6月(六)13日 18:00">6月14日(日) 00:00</span></td>
+</tr>
+<tr class="match-row" data-g="C">
+  <td><span class="group-badge" style="background:var(--Cb);color:var(--C);border:1px solid rgba(224,92,58,0.3)" data-i18n="gc">C组</span></td>
+  <td><div class="match-teams"><span class="team">🇭🇹 <span data-i18n="hai">海地</span></span><span class="vs-sep">VS</span><span class="team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 <span data-i18n="sco">苏格兰</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-gillette">Gillette Stadium · 波士顿</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(六)13日 21:00|Jun (Sat) 13, 21:00|13. Jun (Sa.) 21:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,13,21,0,EDT" data-localfmt="6月(六)13日 21:00">6月14日(日) 03:00</span></td>
+</tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0614">6月14日（星期日）</div></td></tr>
+<tr class="match-row" data-g="D">
+  <td><span class="group-badge" style="background:var(--Db);color:var(--D);border:1px solid rgba(212,160,23,0.3)" data-i18n="gd">D组</span></td>
+  <td><div class="match-teams"><span class="team">🇦🇺 <span data-i18n="aus">澳大利亚</span></span><span class="vs-sep">VS</span><span class="team">🇹🇷 <span data-i18n="tur">土耳其</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bc">BC Place · 温哥华</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(日)14日 12:00|Jun (Sun) 14, 12:00|14. Jun (So.) 12:00"></div><div class="time-sub">PDT</div></td>
+  <td><span class="de-time" data-match="6,14,12,0,PDT" data-localfmt="6月(日)14日 12:00">6月14日(日) 21:00</span></td>
+</tr>
+<tr class="match-row" data-g="E">
+  <td><span class="group-badge" style="background:var(--Eb);color:var(--E);border:1px solid rgba(155,89,182,0.3)" data-i18n="ge">E组</span></td>
+  <td><div class="match-teams"><span class="team">🇩🇪 <span data-i18n="ger">德国</span></span><span class="vs-sep">VS</span><span class="team">🇨🇼 <span data-i18n="cur">库拉索</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-nrg">NRG Stadium · 休斯顿</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(日)14日 13:00|Jun (Sun) 14, 13:00|14. Jun (So.) 13:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,14,13,0,CDT" data-localfmt="6月(日)14日 13:00">6月14日(日) 20:00</span></td>
+</tr>
+<tr class="match-row" data-g="F">
+  <td><span class="group-badge" style="background:var(--Fb);color:var(--F);border:1px solid rgba(224,68,92,0.3)" data-i18n="gf">F组</span></td>
+  <td><div class="match-teams"><span class="team">🇳🇱 <span data-i18n="ned">荷兰</span></span><span class="vs-sep">VS</span><span class="team">🇯🇵 <span data-i18n="jpn">日本</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-att">AT&amp;T Stadium · 达拉斯</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(日)14日 16:00|Jun (Sun) 14, 16:00|14. Jun (So.) 16:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,14,16,0,CDT" data-localfmt="6月(日)14日 16:00">6月14日(日) 23:00</span></td>
+</tr>
+<tr class="match-row" data-g="E">
+  <td><span class="group-badge" style="background:var(--Eb);color:var(--E);border:1px solid rgba(155,89,182,0.3)" data-i18n="ge">E组</span></td>
+  <td><div class="match-teams"><span class="team">🇨🇮 <span data-i18n="civ">科特迪瓦</span></span><span class="vs-sep">VS</span><span class="team">🇪🇨 <span data-i18n="ecu">厄瓜多尔</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lincoln">Lincoln Financial · 费城</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(日)14日 19:00|Jun (Sun) 14, 19:00|14. Jun (So.) 19:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,14,19,0,EDT" data-localfmt="6月(日)14日 19:00">6月15日(一) 01:00</span></td>
+</tr>
+<tr class="match-row" data-g="F">
+  <td><span class="group-badge" style="background:var(--Fb);color:var(--F);border:1px solid rgba(224,68,92,0.3)" data-i18n="gf">F组</span></td>
+  <td><div class="match-teams"><span class="team">🇸🇪 <span data-i18n="swe">瑞典</span></span><span class="vs-sep">VS</span><span class="team">🇹🇳 <span data-i18n="tun">突尼斯</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bbva">Estadio BBVA · 蒙特雷</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(日)14日 22:00|Jun (Sun) 14, 22:00|14. Jun (So.) 22:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,14,22,0,CDT" data-localfmt="6月(日)14日 22:00">6月15日(一) 05:00</span></td>
+</tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0615">6月15日（星期一）</div></td></tr>
+<tr class="match-row" data-g="H">
+  <td><span class="group-badge" style="background:var(--Hb);color:var(--H);border:1px solid rgba(232,126,34,0.3)" data-i18n="gh">H组</span></td>
+  <td><div class="match-teams"><span class="team">🇪🇸 <span data-i18n="esp">西班牙</span></span><span class="vs-sep">VS</span><span class="team">🇨🇻 <span data-i18n="cpv">佛得角</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-mbenz">Mercedes-Benz · 亚特兰大</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(一)15日 12:00|Jun (Mon) 15, 12:00|15. Jun (Mo.) 12:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,15,12,0,EDT" data-localfmt="6月(一)15日 12:00">6月15日(一) 18:00</span></td>
+</tr>
+<tr class="match-row" data-g="G">
+  <td><span class="group-badge" style="background:var(--Gb);color:var(--G);border:1px solid rgba(45,200,200,0.3)" data-i18n="gg">G组</span></td>
+  <td><div class="match-teams"><span class="team">🇧🇪 <span data-i18n="bel">比利时</span></span><span class="vs-sep">VS</span><span class="team">🇪🇬 <span data-i18n="egy">埃及</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lumen">Lumen Field · 西雅图</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(一)15日 15:00|Jun (Mon) 15, 15:00|15. Jun (Mo.) 15:00"></div><div class="time-sub">PDT</div></td>
+  <td><span class="de-time" data-match="6,15,15,0,PDT" data-localfmt="6月(一)15日 15:00">6月16日(二) 00:00</span></td>
+</tr>
+<tr class="match-row" data-g="H">
+  <td><span class="group-badge" style="background:var(--Hb);color:var(--H);border:1px solid rgba(232,126,34,0.3)" data-i18n="gh">H组</span></td>
+  <td><div class="match-teams"><span class="team">🇸🇦 <span data-i18n="ksa">沙特</span></span><span class="vs-sep">VS</span><span class="team">🇺🇾 <span data-i18n="uru">乌拉圭</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-hardrock">Hard Rock · 迈阿密</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(一)15日 18:00|Jun (Mon) 15, 18:00|15. Jun (Mo.) 18:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,15,18,0,EDT" data-localfmt="6月(一)15日 18:00">6月16日(二) 00:00</span></td>
+</tr>
+<tr class="match-row" data-g="G">
+  <td><span class="group-badge" style="background:var(--Gb);color:var(--G);border:1px solid rgba(45,200,200,0.3)" data-i18n="gg">G组</span></td>
+  <td><div class="match-teams"><span class="team">🇮🇷 <span data-i18n="irn">伊朗</span></span><span class="vs-sep">VS</span><span class="team">🇳🇿 <span data-i18n="nzl">新西兰</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-sofi">SoFi Stadium · 洛杉矶</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(一)15日 21:00|Jun (Mon) 15, 21:00|15. Jun (Mo.) 21:00"></div><div class="time-sub">PDT</div></td>
+  <td><span class="de-time" data-match="6,15,21,0,PDT" data-localfmt="6月(一)15日 21:00">6月16日(二) 06:00</span></td>
+</tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0616">6月16日（星期二）</div></td></tr>
+<tr class="match-row" data-g="I">
+  <td><span class="group-badge" style="background:var(--Ib);color:var(--I);border:1px solid rgba(91,138,240,0.3)" data-i18n="gi">I组</span></td>
+  <td><div class="match-teams"><span class="team">🇫🇷 <span data-i18n="fra">法国</span></span><span class="vs-sep">VS</span><span class="team">🇸🇳 <span data-i18n="sen">塞内加尔</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-metlife">MetLife Stadium · 新泽西</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(二)16日 15:00|Jun (Tue) 16, 15:00|16. Jun (Di.) 15:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,16,15,0,EDT" data-localfmt="6月(二)16日 15:00">6月16日(二) 21:00</span></td>
+</tr>
+<tr class="match-row" data-g="I">
+  <td><span class="group-badge" style="background:var(--Ib);color:var(--I);border:1px solid rgba(91,138,240,0.3)" data-i18n="gi">I组</span></td>
+  <td><div class="match-teams"><span class="team">🇮🇶 <span data-i18n="irq">伊拉克</span></span><span class="vs-sep">VS</span><span class="team">🇳🇴 <span data-i18n="nor">挪威</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-gillette">Gillette Stadium · 波士顿</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(二)16日 18:00|Jun (Tue) 16, 18:00|16. Jun (Di.) 18:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,16,18,0,EDT" data-localfmt="6月(二)16日 18:00">6月17日(三) 00:00</span></td>
+</tr>
+<tr class="match-row" data-g="J">
+  <td><span class="group-badge" style="background:var(--Jb);color:var(--J);border:1px solid rgba(69,201,122,0.3)" data-i18n="gj">J组</span></td>
+  <td><div class="match-teams"><span class="team">🇦🇷 <span data-i18n="arg">阿根廷</span></span><span class="vs-sep">VS</span><span class="team">🇩🇿 <span data-i18n="alg">阿尔及利亚</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-arrowhead">Arrowhead · 堪萨斯城</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(二)16日 21:00|Jun (Tue) 16, 21:00|16. Jun (Di.) 21:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,16,21,0,CDT" data-localfmt="6月(二)16日 21:00">6月17日(三) 04:00</span></td>
+</tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0617">6月17日（星期三）</div></td></tr>
+<tr class="match-row" data-g="J">
+  <td><span class="group-badge" style="background:var(--Jb);color:var(--J);border:1px solid rgba(69,201,122,0.3)" data-i18n="gj">J组</span></td>
+  <td><div class="match-teams"><span class="team">🇦🇹 <span data-i18n="aut">奥地利</span></span><span class="vs-sep">VS</span><span class="team">🇯🇴 <span data-i18n="jor">约旦</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-levis">Levi's Stadium · 圣克拉拉</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(三)17日 00:00|Jun (Wed) 17, 00:00|17. Jun (Mi.) 00:00"></div><div class="time-sub">PDT</div></td>
+  <td><span class="de-time" data-match="6,17,0,0,PDT" data-localfmt="6月(三)17日 00:00">6月17日(三) 09:00</span></td>
+</tr>
+<tr class="match-row" data-g="K">
+  <td><span class="group-badge" style="background:var(--Kb);color:var(--K);border:1px solid rgba(212,78,155,0.3)" data-i18n="gk">K组</span></td>
+  <td><div class="match-teams"><span class="team">🇵🇹 <span data-i18n="por">葡萄牙</span></span><span class="vs-sep">VS</span><span class="team">🇨🇩 <span data-i18n="cod">刚果DR</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-nrg">NRG Stadium · 休斯顿</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(三)17日 13:00|Jun (Wed) 17, 13:00|17. Jun (Mi.) 13:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,17,13,0,CDT" data-localfmt="6月(三)17日 13:00">6月17日(三) 20:00</span></td>
+</tr>
+<tr class="match-row" data-g="L">
+  <td><span class="group-badge" style="background:var(--Lb);color:var(--L);border:1px solid rgba(245,200,66,0.3)" data-i18n="gl">L组</span></td>
+  <td><div class="match-teams"><span class="team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 <span data-i18n="eng">英格兰</span></span><span class="vs-sep">VS</span><span class="team">🇭🇷 <span data-i18n="cro">克罗地亚</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-att">AT&amp;T Stadium · 达拉斯</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(三)17日 16:00|Jun (Wed) 17, 16:00|17. Jun (Mi.) 16:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,17,16,0,CDT" data-localfmt="6月(三)17日 16:00">6月17日(三) 23:00</span></td>
+</tr>
+<tr class="match-row" data-g="L">
+  <td><span class="group-badge" style="background:var(--Lb);color:var(--L);border:1px solid rgba(245,200,66,0.3)" data-i18n="gl">L组</span></td>
+  <td><div class="match-teams"><span class="team">🇬🇭 <span data-i18n="gha">加纳</span></span><span class="vs-sep">VS</span><span class="team">🇵🇦 <span data-i18n="pan">巴拿马</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bmo">BMO Field · 多伦多</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(三)17日 19:00|Jun (Wed) 17, 19:00|17. Jun (Mi.) 19:00"></div><div class="time-sub">EDT</div></td>
+  <td><span class="de-time" data-match="6,17,19,0,EDT" data-localfmt="6月(三)17日 19:00">6月18日(四) 01:00</span></td>
+</tr>
+<tr class="match-row" data-g="K">
+  <td><span class="group-badge" style="background:var(--Kb);color:var(--K);border:1px solid rgba(212,78,155,0.3)" data-i18n="gk">K组</span></td>
+  <td><div class="match-teams"><span class="team">🇺🇿 <span data-i18n="uzb">乌兹别克</span></span><span class="vs-sep">VS</span><span class="team">🇨🇴 <span data-i18n="col">哥伦比亚</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-azteca">Estadio Azteca · 墨西哥城</div></td>
+  <td class="score-wrap"><span class="score">-:-</span></td>
+  <td class="time-cell"><div class="time-main" data-ltime="6月(三)17日 22:00|Jun (Wed) 17, 22:00|17. Jun (Mi.) 22:00"></div><div class="time-sub">CDT</div></td>
+  <td><span class="de-time" data-match="6,17,22,0,CDT" data-localfmt="6月(三)17日 22:00">6月18日(四) 05:00</span></td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ ROUND 2 ═══════════════ -->
+<div class="round-section">
+  <div class="round-header">
+    <div class="round-num" data-i18n="r2tag">第二轮</div>
+    <div class="round-title" data-i18n="r2title">小组赛 · 第二场</div>
+    <div class="round-line"></div>
+  </div>
+  <table class="schedule-table">
+    <thead><tr>
+      <th style="width:68px" data-i18n="thgroup">小组</th>
+      <th data-i18n="thmatch">对阵</th>
+      <th class="center" style="width:64px" data-i18n="thscore">比分</th>
+      <th style="width:154px" data-i18n="thlocal">当地时间</th>
+      <th style="width:154px" data-i18n="thde">德国时间</th>
+    </tr></thead>
+    <tbody>
+
+<tr><td colspan="5"><div class="date-label" data-date="0618">6月18日（星期四）</div></td></tr>
+<tr class="match-row" data-g="A"><td><span class="group-badge" style="background:var(--Ab);color:var(--A);border:1px solid rgba(59,125,216,0.3)" data-i18n="ga">A组</span></td><td><div class="match-teams"><span class="team">🇨🇿 <span data-i18n="cze">捷克</span></span><span class="vs-sep">VS</span><span class="team">🇿🇦 <span data-i18n="rsa">南非</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-mbenz">Mercedes-Benz · 亚特兰大</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)18日 12:00|Jun (Thu) 18, 12:00|18. Jun (Do.) 12:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,18,12,0,EDT" data-localfmt="6月(四)18日 12:00">6月18日(四) 18:00</span></td></tr>
+<tr class="match-row" data-g="B"><td><span class="group-badge" style="background:var(--Bb);color:var(--B);border:1px solid rgba(58,173,116,0.3)" data-i18n="gb">B组</span></td><td><div class="match-teams"><span class="team">🇨🇭 <span data-i18n="sui">瑞士</span></span><span class="vs-sep">VS</span><span class="team">🇧🇦 <span data-i18n="bih">波黑</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-sofi">SoFi Stadium · 洛杉矶</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)18日 15:00|Jun (Thu) 18, 15:00|18. Jun (Do.) 15:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,18,15,0,PDT" data-localfmt="6月(四)18日 15:00">6月19日(五) 00:00</span></td></tr>
+<tr class="match-row" data-g="B"><td><span class="group-badge" style="background:var(--Bb);color:var(--B);border:1px solid rgba(58,173,116,0.3)" data-i18n="gb">B组</span></td><td><div class="match-teams"><span class="team">🇨🇦 <span data-i18n="can">加拿大</span></span><span class="vs-sep">VS</span><span class="team">🇶🇦 <span data-i18n="qat">卡塔尔</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bc">BC Place · 温哥华</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)18日 18:00|Jun (Thu) 18, 18:00|18. Jun (Do.) 18:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,18,18,0,PDT" data-localfmt="6月(四)18日 18:00">6月19日(五) 03:00</span></td></tr>
+<tr class="match-row" data-g="A"><td><span class="group-badge" style="background:var(--Ab);color:var(--A);border:1px solid rgba(59,125,216,0.3)" data-i18n="ga">A组</span></td><td><div class="match-teams"><span class="team">🇲🇽 <span data-i18n="mex">墨西哥</span></span><span class="vs-sep">VS</span><span class="team">🇰🇷 <span data-i18n="kor">韩国</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-akron">Estadio Akron · 瓦哈卡</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)18日 21:00|Jun (Thu) 18, 21:00|18. Jun (Do.) 21:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,18,21,0,CDT" data-localfmt="6月(四)18日 21:00">6月19日(五) 04:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0619">6月19日（星期五）</div></td></tr>
+<tr class="match-row" data-g="D"><td><span class="group-badge" style="background:var(--Db);color:var(--D);border:1px solid rgba(212,160,23,0.3)" data-i18n="gd">D组</span></td><td><div class="match-teams"><span class="team">🇺🇸 <span data-i18n="usa">美国</span></span><span class="vs-sep">VS</span><span class="team">🇦🇺 <span data-i18n="aus">澳大利亚</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lumen">Lumen Field · 西雅图</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)19日 15:00|Jun (Fri) 19, 15:00|19. Jun (Fr.) 15:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,19,15,0,PDT" data-localfmt="6月(五)19日 15:00">6月20日(六) 00:00</span></td></tr>
+<tr class="match-row" data-g="C"><td><span class="group-badge" style="background:var(--Cb);color:var(--C);border:1px solid rgba(224,92,58,0.3)" data-i18n="gc">C组</span></td><td><div class="match-teams"><span class="team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 <span data-i18n="sco">苏格兰</span></span><span class="vs-sep">VS</span><span class="team">🇲🇦 <span data-i18n="mar">摩洛哥</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-gillette">Gillette Stadium · 波士顿</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)19日 18:00|Jun (Fri) 19, 18:00|19. Jun (Fr.) 18:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,19,18,0,EDT" data-localfmt="6月(五)19日 18:00">6月20日(六) 00:00</span></td></tr>
+<tr class="match-row" data-g="C"><td><span class="group-badge" style="background:var(--Cb);color:var(--C);border:1px solid rgba(224,92,58,0.3)" data-i18n="gc">C组</span></td><td><div class="match-teams"><span class="team">🇧🇷 <span data-i18n="bra">巴西</span></span><span class="vs-sep">VS</span><span class="team">🇭🇹 <span data-i18n="hai">海地</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lincoln">Lincoln Financial · 费城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)19日 20:30|Jun (Fri) 19, 20:30|19. Jun (Fr.) 20:30"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,19,20,30,EDT" data-localfmt="6月(五)19日 20:30">6月20日(六) 02:30</span></td></tr>
+<tr class="match-row" data-g="D"><td><span class="group-badge" style="background:var(--Db);color:var(--D);border:1px solid rgba(212,160,23,0.3)" data-i18n="gd">D组</span></td><td><div class="match-teams"><span class="team">🇹🇷 <span data-i18n="tur">土耳其</span></span><span class="vs-sep">VS</span><span class="team">🇵🇾 <span data-i18n="par">巴拉圭</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-levis">Levi's Stadium · 圣克拉拉</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)19日 23:00|Jun (Fri) 19, 23:00|19. Jun (Fr.) 23:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,19,23,0,PDT" data-localfmt="6月(五)19日 23:00">6月20日(六) 08:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0620">6月20日（星期六）</div></td></tr>
+<tr class="match-row" data-g="F"><td><span class="group-badge" style="background:var(--Fb);color:var(--F);border:1px solid rgba(224,68,92,0.3)" data-i18n="gf">F组</span></td><td><div class="match-teams"><span class="team">🇳🇱 <span data-i18n="ned">荷兰</span></span><span class="vs-sep">VS</span><span class="team">🇸🇪 <span data-i18n="swe">瑞典</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-nrg">NRG Stadium · 休斯顿</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)20日 13:00|Jun (Sat) 20, 13:00|20. Jun (Sa.) 13:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,20,13,0,CDT" data-localfmt="6月(六)20日 13:00">6月20日(六) 20:00</span></td></tr>
+<tr class="match-row" data-g="E"><td><span class="group-badge" style="background:var(--Eb);color:var(--E);border:1px solid rgba(155,89,182,0.3)" data-i18n="ge">E组</span></td><td><div class="match-teams"><span class="team">🇩🇪 <span data-i18n="ger">德国</span></span><span class="vs-sep">VS</span><span class="team">🇨🇮 <span data-i18n="civ">科特迪瓦</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bmo">BMO Field · 多伦多</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)20日 16:00|Jun (Sat) 20, 16:00|20. Jun (Sa.) 16:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,20,16,0,EDT" data-localfmt="6月(六)20日 16:00">6月20日(六) 22:00</span></td></tr>
+<tr class="match-row" data-g="E"><td><span class="group-badge" style="background:var(--Eb);color:var(--E);border:1px solid rgba(155,89,182,0.3)" data-i18n="ge">E组</span></td><td><div class="match-teams"><span class="team">🇪🇨 <span data-i18n="ecu">厄瓜多尔</span></span><span class="vs-sep">VS</span><span class="team">🇨🇼 <span data-i18n="cur">库拉索</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-arrowhead">Arrowhead · 堪萨斯城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)20日 20:00|Jun (Sat) 20, 20:00|20. Jun (Sa.) 20:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,20,20,0,CDT" data-localfmt="6月(六)20日 20:00">6月21日(日) 03:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0621">6月21日（星期日）</div></td></tr>
+<tr class="match-row" data-g="F"><td><span class="group-badge" style="background:var(--Fb);color:var(--F);border:1px solid rgba(224,68,92,0.3)" data-i18n="gf">F组</span></td><td><div class="match-teams"><span class="team">🇹🇳 <span data-i18n="tun">突尼斯</span></span><span class="vs-sep">VS</span><span class="team">🇯🇵 <span data-i18n="jpn">日本</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bbva">Estadio BBVA · 蒙特雷</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(日)21日 00:00|Jun (Sun) 21, 00:00|21. Jun (So.) 00:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,21,0,0,CDT" data-localfmt="6月(日)21日 00:00">6月21日(日) 07:00</span></td></tr>
+<tr class="match-row" data-g="H"><td><span class="group-badge" style="background:var(--Hb);color:var(--H);border:1px solid rgba(232,126,34,0.3)" data-i18n="gh">H组</span></td><td><div class="match-teams"><span class="team">🇪🇸 <span data-i18n="esp">西班牙</span></span><span class="vs-sep">VS</span><span class="team">🇸🇦 <span data-i18n="ksa">沙特</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-mbenz">Mercedes-Benz · 亚特兰大</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(日)21日 12:00|Jun (Sun) 21, 12:00|21. Jun (So.) 12:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,21,12,0,EDT" data-localfmt="6月(日)21日 12:00">6月21日(日) 18:00</span></td></tr>
+<tr class="match-row" data-g="G"><td><span class="group-badge" style="background:var(--Gb);color:var(--G);border:1px solid rgba(45,200,200,0.3)" data-i18n="gg">G组</span></td><td><div class="match-teams"><span class="team">🇧🇪 <span data-i18n="bel">比利时</span></span><span class="vs-sep">VS</span><span class="team">🇮🇷 <span data-i18n="irn">伊朗</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-sofi">SoFi Stadium · 洛杉矶</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(日)21日 15:00|Jun (Sun) 21, 15:00|21. Jun (So.) 15:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,21,15,0,PDT" data-localfmt="6月(日)21日 15:00">6月22日(一) 00:00</span></td></tr>
+<tr class="match-row" data-g="H"><td><span class="group-badge" style="background:var(--Hb);color:var(--H);border:1px solid rgba(232,126,34,0.3)" data-i18n="gh">H组</span></td><td><div class="match-teams"><span class="team">🇺🇾 <span data-i18n="uru">乌拉圭</span></span><span class="vs-sep">VS</span><span class="team">🇨🇻 <span data-i18n="cpv">佛得角</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-hardrock">Hard Rock · 迈阿密</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(日)21日 18:00|Jun (Sun) 21, 18:00|21. Jun (So.) 18:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,21,18,0,EDT" data-localfmt="6月(日)21日 18:00">6月22日(一) 00:00</span></td></tr>
+<tr class="match-row" data-g="G"><td><span class="group-badge" style="background:var(--Gb);color:var(--G);border:1px solid rgba(45,200,200,0.3)" data-i18n="gg">G组</span></td><td><div class="match-teams"><span class="team">🇳🇿 <span data-i18n="nzl">新西兰</span></span><span class="vs-sep">VS</span><span class="team">🇪🇬 <span data-i18n="egy">埃及</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bc">BC Place · 温哥华</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(日)21日 21:00|Jun (Sun) 21, 21:00|21. Jun (So.) 21:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,21,21,0,PDT" data-localfmt="6月(日)21日 21:00">6月22日(一) 06:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0622">6月22日（星期一）</div></td></tr>
+<tr class="match-row" data-g="J"><td><span class="group-badge" style="background:var(--Jb);color:var(--J);border:1px solid rgba(69,201,122,0.3)" data-i18n="gj">J组</span></td><td><div class="match-teams"><span class="team">🇦🇷 <span data-i18n="arg">阿根廷</span></span><span class="vs-sep">VS</span><span class="team">🇦🇹 <span data-i18n="aut">奥地利</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-att">AT&amp;T Stadium · 达拉斯</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(一)22日 13:00|Jun (Mon) 22, 13:00|22. Jun (Mo.) 13:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,22,13,0,CDT" data-localfmt="6月(一)22日 13:00">6月22日(一) 20:00</span></td></tr>
+<tr class="match-row" data-g="I"><td><span class="group-badge" style="background:var(--Ib);color:var(--I);border:1px solid rgba(91,138,240,0.3)" data-i18n="gi">I组</span></td><td><div class="match-teams"><span class="team">🇫🇷 <span data-i18n="fra">法国</span></span><span class="vs-sep">VS</span><span class="team">🇮🇶 <span data-i18n="irq">伊拉克</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lincoln">Lincoln Financial · 费城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(一)22日 17:00|Jun (Mon) 22, 17:00|22. Jun (Mo.) 17:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,22,17,0,EDT" data-localfmt="6月(一)22日 17:00">6月22日(一) 23:00</span></td></tr>
+<tr class="match-row" data-g="I"><td><span class="group-badge" style="background:var(--Ib);color:var(--I);border:1px solid rgba(91,138,240,0.3)" data-i18n="gi">I组</span></td><td><div class="match-teams"><span class="team">🇳🇴 <span data-i18n="nor">挪威</span></span><span class="vs-sep">VS</span><span class="team">🇸🇳 <span data-i18n="sen">塞内加尔</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-metlife">MetLife Stadium · 新泽西</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(一)22日 20:00|Jun (Mon) 22, 20:00|22. Jun (Mo.) 20:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,22,20,0,EDT" data-localfmt="6月(一)22日 20:00">6月23日(二) 02:00</span></td></tr>
+<tr class="match-row" data-g="J"><td><span class="group-badge" style="background:var(--Jb);color:var(--J);border:1px solid rgba(69,201,122,0.3)" data-i18n="gj">J组</span></td><td><div class="match-teams"><span class="team">🇯🇴 <span data-i18n="jor">约旦</span></span><span class="vs-sep">VS</span><span class="team">🇩🇿 <span data-i18n="alg">阿尔及利亚</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-levis">Levi's Stadium · 圣克拉拉</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(一)22日 23:00|Jun (Mon) 22, 23:00|22. Jun (Mo.) 23:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,22,23,0,PDT" data-localfmt="6月(一)22日 23:00">6月23日(二) 08:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0623">6月23日（星期二）</div></td></tr>
+<tr class="match-row" data-g="K"><td><span class="group-badge" style="background:var(--Kb);color:var(--K);border:1px solid rgba(212,78,155,0.3)" data-i18n="gk">K组</span></td><td><div class="match-teams"><span class="team">🇵🇹 <span data-i18n="por">葡萄牙</span></span><span class="vs-sep">VS</span><span class="team">🇺🇿 <span data-i18n="uzb">乌兹别克</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-nrg">NRG Stadium · 休斯顿</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(二)23日 13:00|Jun (Tue) 23, 13:00|23. Jun (Di.) 13:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,23,13,0,CDT" data-localfmt="6月(二)23日 13:00">6月23日(二) 20:00</span></td></tr>
+<tr class="match-row" data-g="L"><td><span class="group-badge" style="background:var(--Lb);color:var(--L);border:1px solid rgba(245,200,66,0.3)" data-i18n="gl">L组</span></td><td><div class="match-teams"><span class="team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 <span data-i18n="eng">英格兰</span></span><span class="vs-sep">VS</span><span class="team">🇬🇭 <span data-i18n="gha">加纳</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-gillette">Gillette Stadium · 波士顿</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(二)23日 16:00|Jun (Tue) 23, 16:00|23. Jun (Di.) 16:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,23,16,0,EDT" data-localfmt="6月(二)23日 16:00">6月23日(二) 22:00</span></td></tr>
+<tr class="match-row" data-g="L"><td><span class="group-badge" style="background:var(--Lb);color:var(--L);border:1px solid rgba(245,200,66,0.3)" data-i18n="gl">L组</span></td><td><div class="match-teams"><span class="team">🇵🇦 <span data-i18n="pan">巴拿马</span></span><span class="vs-sep">VS</span><span class="team">🇭🇷 <span data-i18n="cro">克罗地亚</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bmo">BMO Field · 多伦多</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(二)23日 19:00|Jun (Tue) 23, 19:00|23. Jun (Di.) 19:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,23,19,0,EDT" data-localfmt="6月(二)23日 19:00">6月24日(三) 01:00</span></td></tr>
+<tr class="match-row" data-g="K"><td><span class="group-badge" style="background:var(--Kb);color:var(--K);border:1px solid rgba(212,78,155,0.3)" data-i18n="gk">K组</span></td><td><div class="match-teams"><span class="team">🇨🇴 <span data-i18n="col">哥伦比亚</span></span><span class="vs-sep">VS</span><span class="team">🇨🇩 <span data-i18n="cod">刚果DR</span></span></div><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-akron">Estadio Akron · 瓦哈卡</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(二)23日 22:00|Jun (Tue) 23, 22:00|23. Jun (Di.) 22:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,23,22,0,CDT" data-localfmt="6月(二)23日 22:00">6月24日(三) 05:00</span></td></tr>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ ROUND 3 ═══════════════ -->
+<div class="round-section">
+  <div class="round-header">
+    <div class="round-num" data-i18n="r3tag">第三轮</div>
+    <div class="round-title" data-i18n="r3title">小组赛 · 第三场（同组同时开赛）</div>
+    <div class="round-line"></div>
+  </div>
+  <table class="schedule-table">
+    <thead><tr>
+      <th style="width:68px" data-i18n="thgroup">小组</th>
+      <th data-i18n="thmatch">对阵</th>
+      <th class="center" style="width:64px" data-i18n="thscore">比分</th>
+      <th style="width:154px" data-i18n="thlocal">当地时间</th>
+      <th style="width:154px" data-i18n="thde">德国时间</th>
+    </tr></thead>
+    <tbody>
+
+<tr><td colspan="5"><div class="date-label" data-date="0624">6月24日（星期三）</div></td></tr>
+<tr class="match-row" data-g="B"><td><span class="group-badge" style="background:var(--Bb);color:var(--B);border:1px solid rgba(58,173,116,0.3)" data-i18n="gb">B组</span></td><td><div class="match-teams"><span class="team">🇨🇭 <span data-i18n="sui">瑞士</span></span><span class="vs-sep">VS</span><span class="team">🇨🇦 <span data-i18n="can">加拿大</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bc">BC Place · 温哥华</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(三)24日 15:00|Jun (Wed) 24, 15:00|24. Jun (Mi.) 15:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,24,15,0,PDT" data-localfmt="6月(三)24日 15:00">6月25日(四) 00:00</span></td></tr>
+<tr class="match-row" data-g="B"><td><span class="group-badge" style="background:var(--Bb);color:var(--B);border:1px solid rgba(58,173,116,0.3)" data-i18n="gb">B组</span></td><td><div class="match-teams"><span class="team">🇧🇦 <span data-i18n="bih">波黑</span></span><span class="vs-sep">VS</span><span class="team">🇶🇦 <span data-i18n="qat">卡塔尔</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lumen">Lumen Field · 西雅图</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(三)24日 15:00|Jun (Wed) 24, 15:00|24. Jun (Mi.) 15:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,24,15,0,PDT" data-localfmt="6月(三)24日 15:00">6月25日(四) 00:00</span></td></tr>
+<tr class="match-row" data-g="C"><td><span class="group-badge" style="background:var(--Cb);color:var(--C);border:1px solid rgba(224,92,58,0.3)" data-i18n="gc">C组</span></td><td><div class="match-teams"><span class="team">🏴󠁧󠁢󠁳󠁣󠁴󠁿 <span data-i18n="sco">苏格兰</span></span><span class="vs-sep">VS</span><span class="team">🇧🇷 <span data-i18n="bra">巴西</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-hardrock">Hard Rock · 迈阿密</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(三)24日 18:00|Jun (Wed) 24, 18:00|24. Jun (Mi.) 18:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,24,18,0,EDT" data-localfmt="6月(三)24日 18:00">6月25日(四) 00:00</span></td></tr>
+<tr class="match-row" data-g="C"><td><span class="group-badge" style="background:var(--Cb);color:var(--C);border:1px solid rgba(224,92,58,0.3)" data-i18n="gc">C组</span></td><td><div class="match-teams"><span class="team">🇲🇦 <span data-i18n="mar">摩洛哥</span></span><span class="vs-sep">VS</span><span class="team">🇭🇹 <span data-i18n="hai">海地</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-mbenz">Mercedes-Benz · 亚特兰大</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(三)24日 18:00|Jun (Wed) 24, 18:00|24. Jun (Mi.) 18:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,24,18,0,EDT" data-localfmt="6月(三)24日 18:00">6月25日(四) 00:00</span></td></tr>
+<tr class="match-row" data-g="A"><td><span class="group-badge" style="background:var(--Ab);color:var(--A);border:1px solid rgba(59,125,216,0.3)" data-i18n="ga">A组</span></td><td><div class="match-teams"><span class="team">🇨🇿 <span data-i18n="cze">捷克</span></span><span class="vs-sep">VS</span><span class="team">🇲🇽 <span data-i18n="mex">墨西哥</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-azteca">Estadio Azteca · 墨西哥城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(三)24日 21:00|Jun (Wed) 24, 21:00|24. Jun (Mi.) 21:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,24,21,0,CDT" data-localfmt="6月(三)24日 21:00">6月25日(四) 04:00</span></td></tr>
+<tr class="match-row" data-g="A"><td><span class="group-badge" style="background:var(--Ab);color:var(--A);border:1px solid rgba(59,125,216,0.3)" data-i18n="ga">A组</span></td><td><div class="match-teams"><span class="team">🇿🇦 <span data-i18n="rsa">南非</span></span><span class="vs-sep">VS</span><span class="team">🇰🇷 <span data-i18n="kor">韩国</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bbva">Estadio BBVA · 蒙特雷</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(三)24日 21:00|Jun (Wed) 24, 21:00|24. Jun (Mi.) 21:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,24,21,0,CDT" data-localfmt="6月(三)24日 21:00">6月25日(四) 04:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0625">6月25日（星期四）</div></td></tr>
+<tr class="match-row" data-g="E"><td><span class="group-badge" style="background:var(--Eb);color:var(--E);border:1px solid rgba(155,89,182,0.3)" data-i18n="ge">E组</span></td><td><div class="match-teams"><span class="team">🇨🇼 <span data-i18n="cur">库拉索</span></span><span class="vs-sep">VS</span><span class="team">🇨🇮 <span data-i18n="civ">科特迪瓦</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lincoln">Lincoln Financial · 费城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)25日 16:00|Jun (Thu) 25, 16:00|25. Jun (Do.) 16:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,25,16,0,EDT" data-localfmt="6月(四)25日 16:00">6月25日(四) 22:00</span></td></tr>
+<tr class="match-row" data-g="E"><td><span class="group-badge" style="background:var(--Eb);color:var(--E);border:1px solid rgba(155,89,182,0.3)" data-i18n="ge">E组</span></td><td><div class="match-teams"><span class="team">🇪🇨 <span data-i18n="ecu">厄瓜多尔</span></span><span class="vs-sep">VS</span><span class="team">🇩🇪 <span data-i18n="ger">德国</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-metlife">MetLife Stadium · 新泽西</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)25日 16:00|Jun (Thu) 25, 16:00|25. Jun (Do.) 16:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,25,16,0,EDT" data-localfmt="6月(四)25日 16:00">6月25日(四) 22:00</span></td></tr>
+<tr class="match-row" data-g="F"><td><span class="group-badge" style="background:var(--Fb);color:var(--F);border:1px solid rgba(224,68,92,0.3)" data-i18n="gf">F组</span></td><td><div class="match-teams"><span class="team">🇯🇵 <span data-i18n="jpn">日本</span></span><span class="vs-sep">VS</span><span class="team">🇸🇪 <span data-i18n="swe">瑞典</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-att">AT&amp;T Stadium · 达拉斯</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)25日 19:00|Jun (Thu) 25, 19:00|25. Jun (Do.) 19:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,25,19,0,CDT" data-localfmt="6月(四)25日 19:00">6月26日(五) 02:00</span></td></tr>
+<tr class="match-row" data-g="F"><td><span class="group-badge" style="background:var(--Fb);color:var(--F);border:1px solid rgba(224,68,92,0.3)" data-i18n="gf">F组</span></td><td><div class="match-teams"><span class="team">🇹🇳 <span data-i18n="tun">突尼斯</span></span><span class="vs-sep">VS</span><span class="team">🇳🇱 <span data-i18n="ned">荷兰</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-arrowhead">Arrowhead · 堪萨斯城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)25日 19:00|Jun (Thu) 25, 19:00|25. Jun (Do.) 19:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,25,19,0,CDT" data-localfmt="6月(四)25日 19:00">6月26日(五) 02:00</span></td></tr>
+<tr class="match-row" data-g="D"><td><span class="group-badge" style="background:var(--Db);color:var(--D);border:1px solid rgba(212,160,23,0.3)" data-i18n="gd">D组</span></td><td><div class="match-teams"><span class="team">🇹🇷 <span data-i18n="tur">土耳其</span></span><span class="vs-sep">VS</span><span class="team">🇺🇸 <span data-i18n="usa">美国</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-sofi">SoFi Stadium · 洛杉矶</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)25日 22:00|Jun (Thu) 25, 22:00|25. Jun (Do.) 22:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,25,22,0,PDT" data-localfmt="6月(四)25日 22:00">6月26日(五) 07:00</span></td></tr>
+<tr class="match-row" data-g="D"><td><span class="group-badge" style="background:var(--Db);color:var(--D);border:1px solid rgba(212,160,23,0.3)" data-i18n="gd">D组</span></td><td><div class="match-teams"><span class="team">🇵🇾 <span data-i18n="par">巴拉圭</span></span><span class="vs-sep">VS</span><span class="team">🇦🇺 <span data-i18n="aus">澳大利亚</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-levis">Levi's Stadium · 圣克拉拉</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(四)25日 22:00|Jun (Thu) 25, 22:00|25. Jun (Do.) 22:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,25,22,0,PDT" data-localfmt="6月(四)25日 22:00">6月26日(五) 07:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0626">6月26日（星期五）</div></td></tr>
+<tr class="match-row" data-g="I"><td><span class="group-badge" style="background:var(--Ib);color:var(--I);border:1px solid rgba(91,138,240,0.3)" data-i18n="gi">I组</span></td><td><div class="match-teams"><span class="team">🇳🇴 <span data-i18n="nor">挪威</span></span><span class="vs-sep">VS</span><span class="team">🇫🇷 <span data-i18n="fra">法国</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-gillette">Gillette Stadium · 波士顿</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)26日 15:00|Jun (Fri) 26, 15:00|26. Jun (Fr.) 15:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,26,15,0,EDT" data-localfmt="6月(五)26日 15:00">6月26日(五) 21:00</span></td></tr>
+<tr class="match-row" data-g="I"><td><span class="group-badge" style="background:var(--Ib);color:var(--I);border:1px solid rgba(91,138,240,0.3)" data-i18n="gi">I组</span></td><td><div class="match-teams"><span class="team">🇸🇳 <span data-i18n="sen">塞内加尔</span></span><span class="vs-sep">VS</span><span class="team">🇮🇶 <span data-i18n="irq">伊拉克</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bmo">BMO Field · 多伦多</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)26日 15:00|Jun (Fri) 26, 15:00|26. Jun (Fr.) 15:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,26,15,0,EDT" data-localfmt="6月(五)26日 15:00">6月26日(五) 21:00</span></td></tr>
+<tr class="match-row" data-g="H"><td><span class="group-badge" style="background:var(--Hb);color:var(--H);border:1px solid rgba(232,126,34,0.3)" data-i18n="gh">H组</span></td><td><div class="match-teams"><span class="team">🇨🇻 <span data-i18n="cpv">佛得角</span></span><span class="vs-sep">VS</span><span class="team">🇸🇦 <span data-i18n="ksa">沙特</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-nrg">NRG Stadium · 休斯顿</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)26日 20:00|Jun (Fri) 26, 20:00|26. Jun (Fr.) 20:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,26,20,0,CDT" data-localfmt="6月(五)26日 20:00">6月27日(六) 03:00</span></td></tr>
+<tr class="match-row" data-g="H"><td><span class="group-badge" style="background:var(--Hb);color:var(--H);border:1px solid rgba(232,126,34,0.3)" data-i18n="gh">H组</span></td><td><div class="match-teams"><span class="team">🇺🇾 <span data-i18n="uru">乌拉圭</span></span><span class="vs-sep">VS</span><span class="team">🇪🇸 <span data-i18n="esp">西班牙</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-akron">Estadio Akron · 瓦哈卡</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)26日 20:00|Jun (Fri) 26, 20:00|26. Jun (Fr.) 20:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,26,20,0,CDT" data-localfmt="6月(五)26日 20:00">6月27日(六) 03:00</span></td></tr>
+<tr class="match-row" data-g="G"><td><span class="group-badge" style="background:var(--Gb);color:var(--G);border:1px solid rgba(45,200,200,0.3)" data-i18n="gg">G组</span></td><td><div class="match-teams"><span class="team">🇪🇬 <span data-i18n="egy">埃及</span></span><span class="vs-sep">VS</span><span class="team">🇮🇷 <span data-i18n="irn">伊朗</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lumen">Lumen Field · 西雅图</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)26日 23:00|Jun (Fri) 26, 23:00|26. Jun (Fr.) 23:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,26,23,0,PDT" data-localfmt="6月(五)26日 23:00">6月27日(六) 08:00</span></td></tr>
+<tr class="match-row" data-g="G"><td><span class="group-badge" style="background:var(--Gb);color:var(--G);border:1px solid rgba(45,200,200,0.3)" data-i18n="gg">G组</span></td><td><div class="match-teams"><span class="team">🇳🇿 <span data-i18n="nzl">新西兰</span></span><span class="vs-sep">VS</span><span class="team">🇧🇪 <span data-i18n="bel">比利时</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-bc">BC Place · 温哥华</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(五)26日 23:00|Jun (Fri) 26, 23:00|26. Jun (Fr.) 23:00"></div><div class="time-sub">PDT</div></td><td><span class="de-time" data-match="6,26,23,0,PDT" data-localfmt="6月(五)26日 23:00">6月27日(六) 08:00</span></td></tr>
+
+<tr><td colspan="5"><div class="date-label" data-date="0627">6月27日（星期六）</div></td></tr>
+<tr class="match-row" data-g="L"><td><span class="group-badge" style="background:var(--Lb);color:var(--L);border:1px solid rgba(245,200,66,0.3)" data-i18n="gl">L组</span></td><td><div class="match-teams"><span class="team">🇵🇦 <span data-i18n="pan">巴拿马</span></span><span class="vs-sep">VS</span><span class="team">🏴󠁧󠁢󠁥󠁮󠁧󠁿 <span data-i18n="eng">英格兰</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-metlife">MetLife Stadium · 新泽西</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)27日 17:00|Jun (Sat) 27, 17:00|27. Jun (Sa.) 17:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,27,17,0,EDT" data-localfmt="6月(六)27日 17:00">6月27日(六) 23:00</span></td></tr>
+<tr class="match-row" data-g="L"><td><span class="group-badge" style="background:var(--Lb);color:var(--L);border:1px solid rgba(245,200,66,0.3)" data-i18n="gl">L组</span></td><td><div class="match-teams"><span class="team">🇭🇷 <span data-i18n="cro">克罗地亚</span></span><span class="vs-sep">VS</span><span class="team">🇬🇭 <span data-i18n="gha">加纳</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-lincoln">Lincoln Financial · 费城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)27日 17:00|Jun (Sat) 27, 17:00|27. Jun (Sa.) 17:00"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,27,17,0,EDT" data-localfmt="6月(六)27日 17:00">6月27日(六) 23:00</span></td></tr>
+<tr class="match-row" data-g="K"><td><span class="group-badge" style="background:var(--Kb);color:var(--K);border:1px solid rgba(212,78,155,0.3)" data-i18n="gk">K组</span></td><td><div class="match-teams"><span class="team">🇨🇴 <span data-i18n="col">哥伦比亚</span></span><span class="vs-sep">VS</span><span class="team">🇵🇹 <span data-i18n="por">葡萄牙</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-hardrock">Hard Rock · 迈阿密</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)27日 19:30|Jun (Sat) 27, 19:30|27. Jun (Sa.) 19:30"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,27,19,30,EDT" data-localfmt="6月(六)27日 19:30">6月28日(日) 01:30</span></td></tr>
+<tr class="match-row" data-g="K"><td><span class="group-badge" style="background:var(--Kb);color:var(--K);border:1px solid rgba(212,78,155,0.3)" data-i18n="gk">K组</span></td><td><div class="match-teams"><span class="team">🇨🇩 <span data-i18n="cod">刚果DR</span></span><span class="vs-sep">VS</span><span class="team">🇺🇿 <span data-i18n="uzb">乌兹别克</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-mbenz">Mercedes-Benz · 亚特兰大</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)27日 19:30|Jun (Sat) 27, 19:30|27. Jun (Sa.) 19:30"></div><div class="time-sub">EDT</div></td><td><span class="de-time" data-match="6,27,19,30,EDT" data-localfmt="6月(六)27日 19:30">6月28日(日) 01:30</span></td></tr>
+<tr class="match-row" data-g="J"><td><span class="group-badge" style="background:var(--Jb);color:var(--J);border:1px solid rgba(69,201,122,0.3)" data-i18n="gj">J组</span></td><td><div class="match-teams"><span class="team">🇩🇿 <span data-i18n="alg">阿尔及利亚</span></span><span class="vs-sep">VS</span><span class="team">🇦🇹 <span data-i18n="aut">奥地利</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-arrowhead">Arrowhead · 堪萨斯城</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)27日 22:00|Jun (Sat) 27, 22:00|27. Jun (Sa.) 22:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,27,22,0,CDT" data-localfmt="6月(六)27日 22:00">6月28日(日) 05:00</span></td></tr>
+<tr class="match-row" data-g="J"><td><span class="group-badge" style="background:var(--Jb);color:var(--J);border:1px solid rgba(69,201,122,0.3)" data-i18n="gj">J组</span></td><td><div class="match-teams"><span class="team">🇯🇴 <span data-i18n="jor">约旦</span></span><span class="vs-sep">VS</span><span class="team">🇦🇷 <span data-i18n="arg">阿根廷</span></span></div><span class="simul" data-i18n="simul">同时</span><div style="font-size:10px;color:var(--muted);margin-top:3px" data-i18n="ven-att">AT&amp;T Stadium · 达拉斯</div></td><td class="score-wrap"><span class="score">-:-</span></td><td class="time-cell"><div class="time-main" data-ltime="6月(六)27日 22:00|Jun (Sat) 27, 22:00|27. Jun (Sa.) 22:00"></div><div class="time-sub">CDT</div></td><td><span class="de-time" data-match="6,27,22,0,CDT" data-localfmt="6月(六)27日 22:00">6月28日(日) 05:00</span></td></tr>
+
+    </tbody>
+  </table>
+</div>
+
+<div class="tz-note" data-i18n="tznote">
+  <strong style="color:var(--dim)">时区说明</strong><br>
+  EDT = 东部夏令时 UTC−4 &nbsp;|&nbsp; CDT = 中部夏令时 UTC−5 &nbsp;|&nbsp; PDT = 太平洋夏令时 UTC−7<br>
+  德国 CEST = UTC+2 &nbsp;|&nbsp; 比 EDT +6h，比 CDT +7h，比 PDT +9h
+</div>
+</div>
+
+<script>
+const T = {
+  zh: {
+    badge:'⚽ FIFA World Cup 2026',
+    sub:'2026年6月11日 — 6月27日 · 美国 / 加拿大 / 墨西哥',
+    s1:'参赛队伍',s2:'小组',s3:'小组赛场次',s4:'举办城市',
+    all:'全部',
+    r1tag:'第一轮',r1title:'小组赛 · 第一场',
+    r2tag:'第二轮',r2title:'小组赛 · 第二场',
+    r3tag:'第三轮',r3title:'小组赛 · 第三场（同组同时开赛）',
+    thgroup:'小组',thmatch:'对阵',thscore:'比分',thlocal:'当地时间',thde:'德国时间',
+    ga:'A组',gb:'B组',gc:'C组',gd:'D组',ge:'E组',gf:'F组',
+    gg:'G组',gh:'H组',gi:'I组',gj:'J组',gk:'K组',gl:'L组',
+    simul:'同时',
+    mex:'墨西哥',rsa:'南非',kor:'韩国',cze:'捷克',can:'加拿大',bih:'波黑',usa:'美国',par:'巴拉圭',
+    qat:'卡塔尔',sui:'瑞士',bra:'巴西',mar:'摩洛哥',hai:'海地',sco:'苏格兰',aus:'澳大利亚',tur:'土耳其',
+    ger:'德国',cur:'库拉索',ned:'荷兰',jpn:'日本',civ:'科特迪瓦',ecu:'厄瓜多尔',swe:'瑞典',tun:'突尼斯',
+    esp:'西班牙',cpv:'佛得角',bel:'比利时',egy:'埃及',ksa:'沙特',uru:'乌拉圭',irn:'伊朗',nzl:'新西兰',
+    fra:'法国',sen:'塞内加尔',irq:'伊拉克',nor:'挪威',arg:'阿根廷',alg:'阿尔及利亚',aut:'奥地利',jor:'约旦',
+    por:'葡萄牙',cod:'刚果DR',uzb:'乌兹别克',col:'哥伦比亚',eng:'英格兰',cro:'克罗地亚',gha:'加纳',pan:'巴拿马',
+    'ven-azteca':'阿兹特克球场 · 墨西哥城','ven-akron':'Estadio Akron · 瓦哈卡','ven-bmo':'BMO Field · 多伦多',
+    'ven-sofi':'SoFi Stadium · 洛杉矶','ven-levis':"Levi's Stadium · 圣克拉拉",'ven-metlife':'MetLife Stadium · 新泽西',
+    'ven-gillette':'Gillette Stadium · 波士顿','ven-bc':'BC Place · 温哥华','ven-nrg':'NRG Stadium · 休斯顿',
+    'ven-att':'AT&T Stadium · 达拉斯','ven-lincoln':'Lincoln Financial · 费城','ven-bbva':'Estadio BBVA · 蒙特雷',
+    'ven-mbenz':'Mercedes-Benz · 亚特兰大','ven-lumen':'Lumen Field · 西雅图','ven-hardrock':'Hard Rock · 迈阿密',
+    'ven-arrowhead':'Arrowhead · 堪萨斯城',
+    tznote:'<strong style="color:var(--dim)">时区说明</strong><br>EDT = 东部夏令时 UTC−4 &nbsp;|&nbsp; CDT = 中部夏令时 UTC−5 &nbsp;|&nbsp; PDT = 太平洋夏令时 UTC−7<br>德国 CEST = UTC+2 &nbsp;|&nbsp; 比 EDT +6h，比 CDT +7h，比 PDT +9h',
+    dates:{'0611':'6月11日（星期四）','0612':'6月12日（星期五）','0613':'6月13日（星期六）','0614':'6月14日（星期日）','0615':'6月15日（星期一）','0616':'6月16日（星期二）','0617':'6月17日（星期三）','0618':'6月18日（星期四）','0619':'6月19日（星期五）','0620':'6月20日（星期六）','0621':'6月21日（星期日）','0622':'6月22日（星期一）','0623':'6月23日（星期二）','0624':'6月24日（星期三）','0625':'6月25日（星期四）','0626':'6月26日（星期五）','0627':'6月27日（星期六）'},
+    ltimeIdx:0
+  },
+  en: {
+    badge:'⚽ FIFA World Cup 2026',
+    sub:'June 11 – June 27, 2026 · USA / Canada / Mexico',
+    s1:'Teams',s2:'Groups',s3:'Group Matches',s4:'Host Cities',
+    all:'All',
+    r1tag:'Round 1',r1title:'Group Stage · Matchday 1',
+    r2tag:'Round 2',r2title:'Group Stage · Matchday 2',
+    r3tag:'Round 3',r3title:'Group Stage · Matchday 3 (Simultaneous)',
+    thgroup:'Group',thmatch:'Match',thscore:'Score',thlocal:'Local Time',thde:'Germany Time',
+    ga:'Grp A',gb:'Grp B',gc:'Grp C',gd:'Grp D',ge:'Grp E',gf:'Grp F',
+    gg:'Grp G',gh:'Grp H',gi:'Grp I',gj:'Grp J',gk:'Grp K',gl:'Grp L',
+    simul:'Simul.',
+    mex:'Mexico',rsa:'South Africa',kor:'South Korea',cze:'Czechia',can:'Canada',bih:'Bosnia',usa:'USA',par:'Paraguay',
+    qat:'Qatar',sui:'Switzerland',bra:'Brazil',mar:'Morocco',hai:'Haiti',sco:'Scotland',aus:'Australia',tur:'Türkiye',
+    ger:'Germany',cur:'Curaçao',ned:'Netherlands',jpn:'Japan',civ:'Ivory Coast',ecu:'Ecuador',swe:'Sweden',tun:'Tunisia',
+    esp:'Spain',cpv:'Cape Verde',bel:'Belgium',egy:'Egypt',ksa:'Saudi Arabia',uru:'Uruguay',irn:'Iran',nzl:'New Zealand',
+    fra:'France',sen:'Senegal',irq:'Iraq',nor:'Norway',arg:'Argentina',alg:'Algeria',aut:'Austria',jor:'Jordan',
+    por:'Portugal',cod:'DR Congo',uzb:'Uzbekistan',col:'Colombia',eng:'England',cro:'Croatia',gha:'Ghana',pan:'Panama',
+    'ven-azteca':'Estadio Azteca · Mexico City','ven-akron':'Estadio Akron · Zapopan','ven-bmo':'BMO Field · Toronto',
+    'ven-sofi':'SoFi Stadium · Los Angeles','ven-levis':"Levi's Stadium · Santa Clara",'ven-metlife':'MetLife Stadium · New Jersey',
+    'ven-gillette':'Gillette Stadium · Boston','ven-bc':'BC Place · Vancouver','ven-nrg':'NRG Stadium · Houston',
+    'ven-att':'AT&T Stadium · Dallas','ven-lincoln':'Lincoln Financial · Philadelphia','ven-bbva':'Estadio BBVA · Monterrey',
+    'ven-mbenz':'Mercedes-Benz · Atlanta','ven-lumen':'Lumen Field · Seattle','ven-hardrock':'Hard Rock · Miami',
+    'ven-arrowhead':'Arrowhead · Kansas City',
+    tznote:'<strong style="color:var(--dim)">Time Zones</strong><br>EDT = Eastern Daylight UTC−4 &nbsp;|&nbsp; CDT = Central Daylight UTC−5 &nbsp;|&nbsp; PDT = Pacific Daylight UTC−7<br>Germany CEST = UTC+2 &nbsp;|&nbsp; EDT +6h · CDT +7h · PDT +9h',
+    dates:{'0611':'Jun 11 (Thursday)','0612':'Jun 12 (Friday)','0613':'Jun 13 (Saturday)','0614':'Jun 14 (Sunday)','0615':'Jun 15 (Monday)','0616':'Jun 16 (Tuesday)','0617':'Jun 17 (Wednesday)','0618':'Jun 18 (Thursday)','0619':'Jun 19 (Friday)','0620':'Jun 20 (Saturday)','0621':'Jun 21 (Sunday)','0622':'Jun 22 (Monday)','0623':'Jun 23 (Tuesday)','0624':'Jun 24 (Wednesday)','0625':'Jun 25 (Thursday)','0626':'Jun 26 (Friday)','0627':'Jun 27 (Saturday)'},
+    ltimeIdx:1
+  },
+  de: {
+    badge:'⚽ FIFA WM 2026',
+    sub:'11. Juni – 27. Juni 2026 · USA / Kanada / Mexiko',
+    s1:'Teams',s2:'Gruppen',s3:'Gruppenspiele',s4:'Austragungsorte',
+    all:'Alle',
+    r1tag:'Spieltag 1',r1title:'Gruppenphase · 1. Spieltag',
+    r2tag:'Spieltag 2',r2title:'Gruppenphase · 2. Spieltag',
+    r3tag:'Spieltag 3',r3title:'Gruppenphase · 3. Spieltag (gleichzeitig)',
+    thgroup:'Gruppe',thmatch:'Begegnung',thscore:'Stand',thlocal:'Ortszeit',thde:'Dt. Zeit',
+    ga:'Gr. A',gb:'Gr. B',gc:'Gr. C',gd:'Gr. D',ge:'Gr. E',gf:'Gr. F',
+    gg:'Gr. G',gh:'Gr. H',gi:'Gr. I',gj:'Gr. J',gk:'Gr. K',gl:'Gr. L',
+    simul:'Gleichz.',
+    mex:'Mexiko',rsa:'Südafrika',kor:'Südkorea',cze:'Tschechien',can:'Kanada',bih:'Bosnien',usa:'USA',par:'Paraguay',
+    qat:'Katar',sui:'Schweiz',bra:'Brasilien',mar:'Marokko',hai:'Haiti',sco:'Schottland',aus:'Australien',tur:'Türkei',
+    ger:'Deutschland',cur:'Curaçao',ned:'Niederlande',jpn:'Japan',civ:'Elfenbeinküste',ecu:'Ecuador',swe:'Schweden',tun:'Tunesien',
+    esp:'Spanien',cpv:'Kap Verde',bel:'Belgien',egy:'Ägypten',ksa:'Saudi-Arabien',uru:'Uruguay',irn:'Iran',nzl:'Neuseeland',
+    fra:'Frankreich',sen:'Senegal',irq:'Irak',nor:'Norwegen',arg:'Argentinien',alg:'Algerien',aut:'Österreich',jor:'Jordanien',
+    por:'Portugal',cod:'Kongo DR',uzb:'Usbekistan',col:'Kolumbien',eng:'England',cro:'Kroatien',gha:'Ghana',pan:'Panama',
+    'ven-azteca':'Estadio Azteca · Mexiko-Stadt','ven-akron':'Estadio Akron · Zapopan','ven-bmo':'BMO Field · Toronto',
+    'ven-sofi':'SoFi Stadium · Los Angeles','ven-levis':"Levi's Stadium · Santa Clara",'ven-metlife':'MetLife Stadium · New Jersey',
+    'ven-gillette':'Gillette Stadium · Boston','ven-bc':'BC Place · Vancouver','ven-nrg':'NRG Stadium · Houston',
+    'ven-att':'AT&T Stadium · Dallas','ven-lincoln':'Lincoln Financial · Philadelphia','ven-bbva':'Estadio BBVA · Monterrey',
+    'ven-mbenz':'Mercedes-Benz · Atlanta','ven-lumen':'Lumen Field · Seattle','ven-hardrock':'Hard Rock · Miami',
+    'ven-arrowhead':'Arrowhead · Kansas City',
+    tznote:'<strong style="color:var(--dim)">Zeitzonen</strong><br>EDT = Eastern Daylight UTC−4 &nbsp;|&nbsp; CDT = Central Daylight UTC−5 &nbsp;|&nbsp; PDT = Pacific Daylight UTC−7<br>Deutschland CEST = UTC+2 &nbsp;|&nbsp; EDT +6h · CDT +7h · PDT +9h',
+    dates:{'0611':'11. Juni (Donnerstag)','0612':'12. Juni (Freitag)','0613':'13. Juni (Samstag)','0614':'14. Juni (Sonntag)','0615':'15. Juni (Montag)','0616':'16. Juni (Dienstag)','0617':'17. Juni (Mittwoch)','0618':'18. Juni (Donnerstag)','0619':'19. Juni (Freitag)','0620':'20. Juni (Samstag)','0621':'21. Juni (Sonntag)','0622':'22. Juni (Montag)','0623':'23. Juni (Dienstag)','0624':'24. Juni (Mittwoch)','0625':'25. Juni (Donnerstag)','0626':'26. Juni (Freitag)','0627':'27. Juni (Samstag)'},
+    ltimeIdx:2
+  }
+};
+
+// ── Timezone offsets for each venue code ──
+// All match times are stored as UTC epoch minutes in data-utc on each row
+// We compute UTC from local time + venue offset at build time via data-utc attribute
+
+// venue UTC offsets during June 2026 (summer / daylight saving)
+const VENUE_OFFSET = {
+  CDT: -5, // Mexico City, Monterrey, Houston, Dallas, Kansas City
+  EDT: -4, // Toronto, New York/NJ, Boston, Philadelphia, Miami, Atlanta
+  PDT: -7  // Los Angeles, Seattle, Vancouver, Santa Clara
+};
+
+// Parse "data-utc" = "MMDD HH:MM TZ" → UTC minutes since Jan 1
+// We'll store raw match data as [month, day, hour, min, tzCode] in data-match
+// and compute the display on the fly.
+
+// ── language data ──
+let currentLang = 'zh';
+let currentTZ = '+2'; // default: Berlin CEST
+
+const TZ_LABELS = {
+  'local': { zh:'当地时间', de:'Ortszeit', en:'Local Time' },
+  '+8':  { zh:'北京时间 UTC+8', de:'Peking UTC+8', en:'Beijing UTC+8' },
+  '+9':  { zh:'东京时间 UTC+9', de:'Tokio UTC+9', en:'Tokyo UTC+9' },
+  '+5.5':{ zh:'新德里 UTC+5:30', de:'Neu-Delhi UTC+5:30', en:'New Delhi UTC+5:30' },
+  '+7':  { zh:'曼谷 UTC+7', de:'Bangkok UTC+7', en:'Bangkok UTC+7' },
+  '+2':  { zh:'柏林 CEST UTC+2', de:'Berlin CEST UTC+2', en:'Berlin CEST UTC+2' },
+  '+1':  { zh:'伦敦 BST UTC+1', de:'London BST UTC+1', en:'London BST UTC+1' },
+  '+3':  { zh:'莫斯科 UTC+3', de:'Moskau UTC+3', en:'Moscow UTC+3' },
+  '-4':  { zh:'纽约 EDT UTC-4', de:'New York EDT UTC-4', en:'New York EDT UTC-4' },
+  '-5':  { zh:'芝加哥 CDT UTC-5', de:'Chicago CDT UTC-5', en:'Chicago CDT UTC-5' },
+  '-6':  { zh:'墨西哥城 UTC-6', de:'Mexiko-Stadt UTC-6', en:'Mexico City UTC-6' },
+  '-7':  { zh:'洛杉矶 PDT UTC-7', de:'Los Angeles PDT UTC-7', en:'Los Angeles PDT UTC-7' },
+  '-3':  { zh:'圣保罗 UTC-3', de:'São Paulo UTC-3', en:'São Paulo UTC-3' },
+  '+10': { zh:'悉尼 AEST UTC+10', de:'Sydney AEST UTC+10', en:'Sydney AEST UTC+10' },
+  '+12': { zh:'奥克兰 UTC+12', de:'Auckland UTC+12', en:'Auckland UTC+12' },
+  '0':   { zh:'伦敦/达喀尔 UTC+0', de:'London/Dakar UTC+0', en:'London/Dakar UTC+0' },
+};
+
+// Day-of-week names
+const DOW = {
+  zh: ['日','一','二','三','四','五','六'],
+  de: ['So.','Mo.','Di.','Mi.','Do.','Fr.','Sa.'],
+  en: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+};
+const MONTH = {
+  zh: m => m+'月',
+  de: m => ['','Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'][m]+'.  ',
+  en: m => ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m]
+};
+
+function utcMinFromMatch(month, day, hour, min, tzCode) {
+  const offset = VENUE_OFFSET[tzCode]; // e.g. -5
+  // total minutes from a reference point (just use day-of-year style)
+  const dayOfYear = (month===6 ? day : day+30);
+  return dayOfYear*24*60 + hour*60 + min - offset*60;
+}
+
+function formatConverted(utcMin, targetOffset, lang) {
+  // targetOffset is a number like +2, -7, +5.5
+  const localMin = utcMin + targetOffset*60;
+  let totalMin = localMin;
+  const dayOfYearBase = Math.floor(totalMin / (24*60));
+  const timeMin = ((totalMin % (24*60)) + 24*60) % (24*60);
+  const h = Math.floor(timeMin/60), m = timeMin%60;
+  const hStr = String(h).padStart(2,'0');
+  const mStr = String(m).padStart(2,'0');
+
+  // figure out month/day from dayOfYear (June=day 1-30, July=day 31+)
+  let dispMonth=6, dispDay=dayOfYearBase;
+  if(dayOfYearBase > 30){ dispMonth=7; dispDay=dayOfYearBase-30; }
+  if(dayOfYearBase < 1){ dispMonth=5; dispDay=dayOfYearBase+31; }
+
+  // day of week: June 11 2026 is Thursday = 4
+  // June 1 2026 = Monday = 1
+  const june1dow = 1; // Monday
+  const totalDayOffset = (dispMonth===6 ? dispDay-1 : dispMonth===7 ? dispDay+29 : dispDay-2);
+  const dow = ((june1dow + totalDayOffset) % 7 + 7) % 7;
+
+  const dowStr = DOW[lang][dow];
+  let dateStr;
+  if(lang==='zh') dateStr = `${dispMonth}月${dispDay}日(${dowStr})`;
+  else if(lang==='de') dateStr = `${dispDay}. ${MONTH.de(dispMonth)}(${dowStr})`;
+  else dateStr = `${MONTH.en(dispMonth)} ${dispDay} (${dowStr})`;
+
+  return `${dateStr} ${hStr}:${mStr}`;
+}
+
+function refreshConvertedTimes() {
+  const isLocal = currentTZ === 'local';
+  const offset = isLocal ? null : parseFloat(currentTZ);
+
+  document.querySelectorAll('.de-time[data-match]').forEach(el => {
+    if(isLocal) {
+      el.textContent = el.dataset.localfmt;
+      el.closest('td').classList.remove('col-conv');
+    } else {
+      const [month,day,hour,min,tzCode] = el.dataset.match.split(',').map((v,i)=>i<4?parseInt(v):v);
+      const utcMin = utcMinFromMatch(month,day,hour,min,tzCode);
+      el.textContent = formatConverted(utcMin, offset, currentLang);
+      el.closest('td').classList.add('col-conv');
+    }
+  });
+
+  // update column header
+  const tzLabelObj = TZ_LABELS[currentTZ] || TZ_LABELS['+2'];
+  const tzLabel = tzLabelObj[currentLang] || tzLabelObj['en'];
+  document.querySelectorAll('[data-i18n="thde"]').forEach(el => {
+    el.textContent = isLocal ? (currentLang==='zh'?'当地时间':currentLang==='de'?'Ortszeit':'Local Time') : tzLabel;
+  });
+}
+
+function setTZ(val) {
+  currentTZ = val;
+  // update select option labels to current language
+  refreshConvertedTimes();
+}
+
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const t = T[lang];
+  document.querySelector('[data-i18n="h1zh"]').style.display = lang==='zh'?'block':'none';
+  document.querySelector('[data-i18n="h1de"]').style.display = lang==='de'?'block':'none';
+  document.querySelector('[data-i18n="h1en"]').style.display = lang==='en'?'block':'none';
+  document.getElementById('legend-zh').style.display = lang==='zh'?'flex':'none';
+  document.getElementById('legend-de').style.display = lang==='de'?'flex':'none';
+  document.getElementById('legend-en').style.display = lang==='en'?'flex':'none';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if(key.startsWith('h1')) return;
+    if(key==='thde') return; // handled by refreshConvertedTimes
+    if(t[key] !== undefined) el.innerHTML = t[key];
+  });
+  document.querySelectorAll('[data-date]').forEach(el => {
+    const d = el.dataset.date;
+    if(t.dates[d]) el.textContent = t.dates[d];
+  });
+  document.querySelectorAll('[data-ltime]').forEach(el => {
+    const parts = el.dataset.ltime.split('|');
+    el.textContent = parts[t.ltimeIdx] || parts[0];
+  });
+  // update top-bar labels
+  document.getElementById('label-lang').textContent = lang==='zh'?'语言':lang==='de'?'Sprache':'Lang';
+  document.getElementById('label-tz').textContent = lang==='zh'?'时区':lang==='de'?'Zeitzone':'Timezone';
+  // update tz select options labels
+  updateTZSelectLabels(lang);
+  refreshConvertedTimes();
+}
+
+function updateTZSelectLabels(lang) {
+  const sel = document.getElementById('tz-select');
+  const map = {
+    'local': {zh:'📍 当地时间', de:'📍 Ortszeit', en:'📍 Local Time'},
+    '+8':  {zh:'北京 / 上海 UTC+8', de:'Peking / Shanghai UTC+8', en:'Beijing / Shanghai UTC+8'},
+    '+9':  {zh:'东京 / 首尔 UTC+9', de:'Tokio / Seoul UTC+9', en:'Tokyo / Seoul UTC+9'},
+    '+5.5':{zh:'新德里 UTC+5:30', de:'Neu-Delhi UTC+5:30', en:'New Delhi UTC+5:30'},
+    '+7':  {zh:'曼谷 / 雅加达 UTC+7', de:'Bangkok / Jakarta UTC+7', en:'Bangkok / Jakarta UTC+7'},
+    '+2':  {zh:'柏林 / 巴黎 CEST UTC+2', de:'Berlin / Paris CEST UTC+2', en:'Berlin / Paris CEST UTC+2'},
+    '+1':  {zh:'伦敦 BST UTC+1', de:'London BST UTC+1', en:'London BST UTC+1'},
+    '+3':  {zh:'莫斯科 UTC+3', de:'Moskau UTC+3', en:'Moscow UTC+3'},
+    '-4':  {zh:'纽约 EDT UTC-4', de:'New York EDT UTC-4', en:'New York EDT UTC-4'},
+    '-5':  {zh:'芝加哥 CDT UTC-5', de:'Chicago CDT UTC-5', en:'Chicago CDT UTC-5'},
+    '-6':  {zh:'墨西哥城 UTC-6', de:'Mexiko-Stadt UTC-6', en:'Mexico City UTC-6'},
+    '-7':  {zh:'洛杉矶 PDT UTC-7', de:'Los Angeles PDT UTC-7', en:'Los Angeles PDT UTC-7'},
+    '-3':  {zh:'圣保罗 UTC-3', de:'São Paulo UTC-3', en:'São Paulo UTC-3'},
+    '+10': {zh:'悉尼 AEST UTC+10', de:'Sydney AEST UTC+10', en:'Sydney AEST UTC+10'},
+    '+12': {zh:'奥克兰 UTC+12', de:'Auckland UTC+12', en:'Auckland UTC+12'},
+    '+3_2':{zh:'迪拜 / 利雅得 UTC+3', de:'Dubai / Riad UTC+3', en:'Dubai / Riyadh UTC+3'},
+    '+2_2':{zh:'开罗 EET UTC+2', de:'Kairo EET UTC+2', en:'Cairo EET UTC+2'},
+    '0':   {zh:'阿克拉 / 达喀尔 UTC+0', de:'Accra / Dakar UTC+0', en:'Accra / Dakar UTC+0'},
+  };
+  const grpLabels = {
+    zh:['── 亚洲 ──','── 欧洲 ──','── 美洲 ──','── 大洋洲 ──','── 非洲/中东 ──'],
+    de:['── Asien ──','── Europa ──','── Amerika ──','── Ozeanien ──','── Afrika/Nahost ──'],
+    en:['── Asia ──','── Europe ──','── Americas ──','── Oceania ──','── Africa/Middle East ──'],
+  };
+  const grps = sel.querySelectorAll('optgroup');
+  grps.forEach((g,i)=>{ if(grpLabels[lang][i]) g.label=grpLabels[lang][i]; });
+  sel.querySelectorAll('option').forEach(opt => {
+    const v = opt.value;
+    if(map[v] && map[v][lang]) opt.textContent = map[v][lang];
+  });
+}
+
+function filterGroup(g, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.match-row').forEach(row => {
+    row.classList.toggle('hidden', g !== 'ALL' && row.dataset.g !== g);
+  });
+}
+
+// ── Boot ──
+// Init local times
+document.querySelectorAll('[data-ltime]').forEach(el => {
+  el.textContent = el.dataset.ltime.split('|')[0];
+});
+// Init converted times (Berlin +2 default)
+refreshConvertedTimes();
+</script>
+</body>
+</html>
