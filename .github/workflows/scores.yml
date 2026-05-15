@@ -1,0 +1,27 @@
+name: Update Scores
+
+on:
+  schedule:
+    - cron: '0 * * * *'  
+  workflow_dispatch:       
+
+jobs:
+  fetch-scores:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch scores from API-Football
+        run: |
+          curl -s \
+            -H "x-apisports-key: ${{ secrets.API_FOOTBALL_KEY }}" \
+            "https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=$(date +%Y-%m-%d)" \
+            -o scores.json
+
+      - name: Commit and push scores
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add scores.json
+          git diff --staged --quiet || git commit -m "update scores"
+          git push

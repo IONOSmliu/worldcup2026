@@ -851,16 +851,10 @@ document.querySelectorAll('[data-ltime]').forEach(el => {
 refreshConvertedTimes();
 
 // ══════════════════════════════════════════
-// API-Football 自动比分
+// 读取 scores.json 显示比分
 // ══════════════════════════════════════════
-const API_KEY = '7960849d7482fa2fec3d7af7e43cf228';
-const API_URL = 'https://v3.football.api-sports.io';
-const LEAGUE  = 1;
-const SEASON  = 2026;
-
-// Status display
 const STATUS_MAP = {
-  'NS' : '',         // Not Started
+  'NS' : '',
   '1H' : '▶ 上半场', '2H': '▶ 下半场',
   'HT' : '⏸ 中场',  'ET': '▶ 加时',
   'P'  : '⚽ 点球',  'FT': '✓ 完场',
@@ -869,13 +863,8 @@ const STATUS_MAP = {
   'PST': '📅 延期',  'CANC':'❌ 取消',
 };
 
-let fixtureCache = {};   // id -> fixture object
-let pollTimer = null;
-
-// Normalize team name for fuzzy matching
 function norm(s){ return s.toLowerCase().replace(/[^a-z]/g,''); }
 
-// Build lookup: "normTeam1+normTeam2" -> score span element
 function buildRowMap() {
   const map = {};
   document.querySelectorAll('.match-row[data-teams]').forEach(row => {
@@ -903,18 +892,17 @@ function applyScores(fixtures, rowMap) {
     if(status === 'NS') {
       scoreEl.textContent = '-:-';
       scoreEl.style.color = '';
+      scoreEl.style.fontWeight = '';
     } else if(['FT','AET','PEN'].includes(status)) {
       scoreEl.textContent = `${gh} - ${ga}`;
       scoreEl.style.color = 'var(--gold2)';
       scoreEl.style.fontWeight = '600';
     } else {
-      // Live
       scoreEl.textContent = `${gh ?? 0} - ${ga ?? 0}`;
       scoreEl.style.color = '#4ade80';
       scoreEl.style.fontWeight = '700';
     }
 
-    // Status badge
     let badge = row.querySelector('.status-badge');
     const statusText = STATUS_MAP[status] || status;
     if(statusText && status !== 'NS') {
@@ -931,43 +919,29 @@ function applyScores(fixtures, rowMap) {
   });
 }
 
-async function fetchScores() {
+async function loadScores() {
   try {
-    // Fetch today's fixtures for WC 2026
-    const today = new Date().toISOString().slice(0,10);
-    const res = await fetch(
-      `${API_URL}/fixtures?league=${LEAGUE}&season=${SEASON}&date=${today}`,
-      { headers: { 'x-apisports-key': API_KEY } }
-    );
+    // 加时间戳防止浏览器缓存
+    const res = await fetch(`scores.json?t=${Date.now()}`);
+    if(!res.ok) return;
     const data = await res.json();
     if(!data.response || data.response.length === 0) return;
 
     const rowMap = buildRowMap();
     applyScores(data.response, rowMap);
 
-    // Check if any match is live
-    const hasLive = data.response.some(f => {
-      const s = f.fixture.status.short;
-      return ['1H','2H','HT','ET','P'].includes(s);
-    });
-
-    // Schedule next poll
-    if(pollTimer) clearTimeout(pollTimer);
-    pollTimer = setTimeout(fetchScores, hasLive ? 3*60*1000 : 30*60*1000);
-
-    // Update last-refresh indicator
+    // 更新刷新时间
     const ind = document.getElementById('refresh-indicator');
     if(ind) {
       const t = new Date().toLocaleTimeString();
       ind.textContent = `⟳ ${t}`;
     }
   } catch(e) {
-    console.warn('Score fetch failed:', e);
-    pollTimer = setTimeout(fetchScores, 10*60*1000);
+    // scores.json 还不存在（开赛前正常）
   }
 }
 
-// Add refresh indicator to top bar
+// 添加刷新时间显示
 const topBar = document.querySelector('.top-bar');
 if(topBar) {
   const ind = document.createElement('span');
@@ -977,8 +951,9 @@ if(topBar) {
   topBar.appendChild(ind);
 }
 
-// Start fetching
-fetchScores();
+// 页面加载时读取，之后每5分钟刷新一次
+loadScores();
+setInterval(loadScores, 5 * 60 * 1000);
 </script>
 </body>
 </html>
