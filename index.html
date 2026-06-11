@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
 .team{font-weight:400;font-size:14px;color:var(--text)}
 .vs-sep{font-family:'Oswald',sans-serif;font-size:10px;color:var(--muted);letter-spacing:0.06em;flex-shrink:0}
 .score-wrap{text-align:center}
-.score{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:3px 10px;display:inline-block;letter-spacing:0.04em;color:var(--dim);min-width:44px;text-align:center}
+.score{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:3px 10px;display:inline-block;letter-spacing:0.04em;color:var(--dim);min-width:44px;text-align:center;white-space:nowrap}
 .time-cell{min-width:130px}
 .time-main{font-family:'Oswald',sans-serif;font-size:14px;font-weight:400;color:var(--text);letter-spacing:0.02em}
 .time-sub{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:0.04em}
@@ -1504,6 +1504,7 @@ function editScore(el) {
       newEl.textContent = `${g1} - ${g2}`;
       newEl.style.color = 'var(--gold2)';
       newEl.style.fontWeight = '600';
+      newEl.style.whiteSpace = 'nowrap';
       // Save to localStorage
       if(teams) {
         const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
@@ -1550,6 +1551,7 @@ function loadSavedScores() {
     scoreEl.textContent = `${home} - ${away}`;
     scoreEl.style.color = 'var(--gold2)';
     scoreEl.style.fontWeight = '600';
+    scoreEl.style.whiteSpace = 'nowrap';
   });
 }
 
