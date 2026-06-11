@@ -1310,11 +1310,21 @@ function recalcStandings(groupKey) {
 
     const [g1, g2] = parts;
 
-    // Find teams in standings
+    // Find teams in standings - exact match using English team names
     const normT = s => s.toLowerCase().replace(/[^a-z]/g,'');
-    const getTeamName = t => (T['zh'][t.key]||'').replace(/^\S+\s/,'');
-    const team1 = STANDINGS[groupKey].find(t => { const n=normT(getTeamName(t)); return n===normT(t1name)||normT(t1name).includes(n)||n.includes(normT(t1name)); });
-    const team2 = STANDINGS[groupKey].find(t => { const n=normT(getTeamName(t)); return n===normT(t2name)||normT(t2name).includes(n)||n.includes(normT(t2name)); });
+    const getTeamNameZh = t => (T['zh'][t.key]||'').replace(/^\S+\s/,'');
+    // Match by English key name (strip cnt_ prefix and use as base)
+    const getKeyBase = t => t.key.replace('cnt_','').toLowerCase();
+    const team1 = STANDINGS[groupKey].find(t => {
+      const keyBase = getKeyBase(t);
+      const n1 = normT(t1name);
+      return n1 === keyBase || n1 === normT(getTeamNameZh(t));
+    });
+    const team2 = STANDINGS[groupKey].find(t => {
+      const keyBase = getKeyBase(t);
+      const n2 = normT(t2name);
+      return n2 === keyBase || n2 === normT(getTeamNameZh(t));
+    });
 
     if(!team1 || !team2) return;
 
