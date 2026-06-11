@@ -1381,5 +1381,179 @@ document.querySelectorAll('.group-badge[data-i18n]').forEach(badge => {
     </div>
   </div>
 </div>
+
+<!-- Admin password modal -->
+<div class="modal-overlay" id="admin-modal" onclick="closeAdminModal(event)">
+  <div class="modal-box" style="max-width:320px">
+    <div class="modal-head">
+      <div class="modal-title">🔐 管理员模式</div>
+      <button class="modal-close" onclick="document.getElementById('admin-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px">
+      <input type="password" id="admin-pw-input" placeholder="输入密码"
+        style="width:100%;padding:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:14px;outline:none;margin-bottom:12px"
+        onkeydown="if(event.key==='Enter')checkAdminPw()">
+      <button onclick="checkAdminPw()"
+        style="width:100%;padding:10px;background:var(--gold);color:#000;border:none;border-radius:6px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:0.06em">
+        进入
+      </button>
+      <div id="admin-pw-err" style="color:#f87171;font-size:12px;margin-top:8px;text-align:center"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin indicator -->
+<div id="admin-indicator" style="display:none;position:fixed;bottom:16px;right:16px;background:var(--gold);color:#000;padding:6px 14px;border-radius:20px;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;z-index:500;cursor:pointer" onclick="exitAdmin()">
+  ✏️ 管理模式 · 点击退出
+</div>
+
+<style>
+.score.editable { cursor:pointer; border-color:var(--gold); color:var(--gold2); }
+.score.editable:hover { background:rgba(201,168,76,0.1); }
+.score-edit-input {
+  width:64px;text-align:center;background:var(--surface2);border:1px solid var(--gold);
+  border-radius:4px;color:var(--gold2);font-family:'Oswald',sans-serif;font-size:14px;
+  font-weight:500;padding:3px 6px;outline:none;
+}
+</style>
+
+<script>
+// ══════════════════════════════════════════
+// 管理员模式
+// ══════════════════════════════════════════
+const ADMIN_PW = '1234';
+let adminMode = false;
+
+// Ctrl+Shift+A to open admin login
+document.addEventListener('keydown', e => {
+  if(e.ctrlKey && e.shiftKey && e.key === 'A') {
+    if(adminMode) { exitAdmin(); return; }
+    document.getElementById('admin-modal').classList.add('open');
+    setTimeout(() => document.getElementById('admin-pw-input').focus(), 100);
+  }
+});
+
+function closeAdminModal(e) {
+  if(e.target === document.getElementById('admin-modal'))
+    document.getElementById('admin-modal').classList.remove('open');
+}
+
+function checkAdminPw() {
+  const pw = document.getElementById('admin-pw-input').value;
+  if(pw === ADMIN_PW) {
+    document.getElementById('admin-modal').classList.remove('open');
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('admin-pw-err').textContent = '';
+    enterAdmin();
+  } else {
+    document.getElementById('admin-pw-err').textContent = '密码错误';
+    document.getElementById('admin-pw-input').value = '';
+  }
+}
+
+function enterAdmin() {
+  adminMode = true;
+  document.getElementById('admin-indicator').style.display = 'block';
+  // Make all scores editable
+  document.querySelectorAll('.score').forEach(el => {
+    el.classList.add('editable');
+    el.title = '点击编辑比分';
+    el.onclick = () => editScore(el);
+  });
+}
+
+function exitAdmin() {
+  adminMode = false;
+  document.getElementById('admin-indicator').style.display = 'none';
+  document.querySelectorAll('.score').forEach(el => {
+    el.classList.remove('editable');
+    el.title = '';
+    el.onclick = null;
+  });
+}
+
+function editScore(el) {
+  if(!adminMode) return;
+  const current = el.textContent.trim();
+  const row = el.closest('.match-row');
+  const teams = row ? row.dataset.teams : '';
+
+  // Create inline input
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'score-edit-input';
+  input.value = current === '-:-' ? '' : current;
+  input.placeholder = '0 - 0';
+  input.maxLength = 7;
+
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+
+  function save() {
+    const val = input.value.trim();
+    // Accept formats: "2-1", "2 - 1", "2:1"
+    const m = val.match(/^(\d+)\s*[-:]\s*(\d+)$/);
+    const newEl = document.createElement('span');
+    newEl.className = 'score' + (adminMode ? ' editable' : '');
+    newEl.title = adminMode ? '点击编辑比分' : '';
+    if(adminMode) newEl.onclick = () => editScore(newEl);
+
+    if(m) {
+      const g1 = parseInt(m[1]), g2 = parseInt(m[2]);
+      newEl.textContent = `${g1} - ${g2}`;
+      newEl.style.color = 'var(--gold2)';
+      newEl.style.fontWeight = '600';
+      // Save to localStorage
+      if(teams) {
+        const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
+        saved[teams] = { home: g1, away: g2, status: 'FT' };
+        localStorage.setItem('wc2026_scores', JSON.stringify(saved));
+      }
+    } else {
+      newEl.textContent = '-:-';
+      newEl.style.color = '';
+      newEl.style.fontWeight = '';
+      if(teams) {
+        const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
+        delete saved[teams];
+        localStorage.setItem('wc2026_scores', JSON.stringify(saved));
+      }
+    }
+    input.replaceWith(newEl);
+  }
+
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter') { save(); }
+    if(e.key === 'Escape') {
+      const newEl = document.createElement('span');
+      newEl.className = 'score' + (adminMode ? ' editable' : '');
+      newEl.textContent = current;
+      if(adminMode) newEl.onclick = () => editScore(newEl);
+      input.replaceWith(newEl);
+    }
+  });
+}
+
+// Load saved scores from localStorage on page load
+function loadSavedScores() {
+  const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
+  if(Object.keys(saved).length === 0) return;
+
+  document.querySelectorAll('.match-row[data-teams]').forEach(row => {
+    const teams = row.dataset.teams;
+    if(!saved[teams]) return;
+    const scoreEl = row.querySelector('.score');
+    if(!scoreEl) return;
+    const { home, away } = saved[teams];
+    scoreEl.textContent = `${home} - ${away}`;
+    scoreEl.style.color = 'var(--gold2)';
+    scoreEl.style.fontWeight = '600';
+  });
+}
+
+loadSavedScores();
+</script>
 </body>
 </html>
