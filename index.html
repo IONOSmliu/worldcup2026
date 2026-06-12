@@ -1413,8 +1413,15 @@ document.querySelectorAll('.group-badge[data-i18n]').forEach(badge => {
 </div>
 
 <!-- Admin indicator -->
-<div id="admin-indicator" style="display:none;position:fixed;bottom:16px;right:16px;background:var(--gold);color:#000;padding:6px 14px;border-radius:20px;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;z-index:500;cursor:pointer" onclick="exitAdmin()">
-  ✏️ 管理模式 · 点击退出
+<div id="admin-indicator" style="display:none;position:fixed;bottom:16px;right:16px;z-index:500;display:none;flex-direction:column;gap:8px;align-items:flex-end">
+  <button onclick="exportScores()"
+    style="background:var(--gold);color:#000;border:none;padding:8px 16px;border-radius:20px;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.08em">
+    💾 导出 scores.json
+  </button>
+  <div onclick="exitAdmin()"
+    style="background:var(--surface2);color:var(--dim);border:1px solid var(--border2);padding:6px 14px;border-radius:20px;font-family:'Oswald',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:0.06em">
+    ✏️ 管理模式 · 点击退出
+  </div>
 </div>
 
 <style>
@@ -1463,7 +1470,8 @@ function checkAdminPw() {
 
 function enterAdmin() {
   adminMode = true;
-  document.getElementById('admin-indicator').style.display = 'block';
+  const ind = document.getElementById('admin-indicator');
+  ind.style.display = 'flex';
   // Make all scores editable
   document.querySelectorAll('.score').forEach(el => {
     el.classList.add('editable');
@@ -1480,6 +1488,34 @@ function exitAdmin() {
     el.title = '';
     el.onclick = null;
   });
+}
+
+function exportScores() {
+  // Build scores.json from localStorage
+  const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
+  // Convert to API-Football-like format for compatibility
+  const response = [];
+  document.querySelectorAll('.match-row[data-teams]').forEach(row => {
+    const [home, away] = row.dataset.teams.split(',');
+    const scoreEl = row.querySelector('.score');
+    const txt = scoreEl ? scoreEl.textContent.trim() : '-:-';
+    const m = txt.match(/^(\d+)\s*-\s*(\d+)$/);
+    if(m) {
+      response.push({
+        teams: { home: { name: home }, away: { name: away } },
+        goals: { home: parseInt(m[1]), away: parseInt(m[2]) },
+        fixture: { status: { short: 'FT' } }
+      });
+    }
+  });
+  const json = JSON.stringify({ response }, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'scores.json';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function editScore(el) {
