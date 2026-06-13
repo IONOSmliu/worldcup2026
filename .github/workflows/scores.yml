@@ -2,8 +2,12 @@ name: Update Scores
 
 on:
   schedule:
-    - cron: '0 * * * *'  
-  workflow_dispatch:       
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      scores_data:
+        description: 'Scores JSON data'
+        required: false
 
 jobs:
   fetch-scores:
@@ -13,7 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Update scores from manual input
+        if: github.event.inputs.scores_data != ''
+        run: |
+          echo '${{ github.event.inputs.scores_data }}' > scores.json
+
       - name: Fetch scores from API-Football
+        if: github.event.inputs.scores_data == ''
         run: |
           curl -s \
             -H "x-apisports-key: ${{ secrets.API_FOOTBALL_KEY }}" \

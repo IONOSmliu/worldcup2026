@@ -1,1 +1,80 @@
-{"get":"fixtures","parameters":{"league":"1","season":"2026","date":"2026-05-15"},"errors":{"plan":"Free plans do not have access to this season, try from 2022 to 2024."},"results":0,"paging":{"current":1,"total":1},"response":[]}
+{
+  "response": [
+    {
+      "teams": {
+        "home": {
+          "name": "Mexico"
+        },
+        "away": {
+          "name": "South Africa"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "South Korea"
+        },
+        "away": {
+          "name": "Czechia"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Canada"
+        },
+        "away": {
+          "name": "Bosnia"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "USA"
+        },
+        "away": {
+          "name": "Paraguay"
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    }
+  ]
+}

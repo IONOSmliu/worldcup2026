@@ -1416,7 +1416,7 @@ document.querySelectorAll('.group-badge[data-i18n]').forEach(badge => {
 <div id="admin-indicator" style="display:none;position:fixed;bottom:16px;right:16px;z-index:500;flex-direction:column;gap:8px;align-items:flex-end">
   <button id="sync-btn" onclick="syncScores()"
     style="background:var(--gold);color:#000;border:none;padding:8px 16px;border-radius:20px;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.08em">
-    ☁️ 同步到网站
+    💾 导出比分
   </button>
   <div onclick="exitAdmin()"
     style="background:var(--surface2);color:var(--dim);border:1px solid var(--border2);padding:6px 14px;border-radius:20px;font-family:'Oswald',sans-serif;font-size:12px;font-weight:500;cursor:pointer;letter-spacing:0.06em">
@@ -1508,48 +1508,19 @@ function buildScoresJson() {
   return { response };
 }
 
-async function syncScores() {
+function syncScores() {
+  const json = JSON.stringify(buildScoresJson(), null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'scores.json';
+  a.click();
+  URL.revokeObjectURL(url);
+
   const btn = document.getElementById('sync-btn');
-  btn.textContent = '⏳ 同步中...';
-  btn.disabled = true;
-
-  const GITHUB_TOKEN = 'YOUR_TOKEN_HERE'; // 替换成你的 token
-  const OWNER = 'IONOSmliu';
-  const REPO = 'worldcup2026';
-
-  const scoresData = JSON.stringify(buildScoresJson());
-
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/scores.yml/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ref: 'main',
-          inputs: { scores_data: scoresData }
-        })
-      }
-    );
-
-    if(res.status === 204) {
-      btn.textContent = '✅ 已同步！';
-      setTimeout(() => {
-        btn.textContent = '☁️ 同步到网站';
-        btn.disabled = false;
-      }, 3000);
-    } else {
-      throw new Error(`HTTP ${res.status}`);
-    }
-  } catch(e) {
-    btn.textContent = '❌ 失败，重试';
-    btn.disabled = false;
-    console.error(e);
-  }
+  btn.textContent = '✅ 已下载！';
+  setTimeout(() => { btn.textContent = '💾 导出比分'; }, 2000);
 }
 
 function editScore(el) {
