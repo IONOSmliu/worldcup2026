@@ -75,6 +75,158 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Qatar"
+        },
+        "away": {
+          "name": "Switzerland"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Brazil"
+        },
+        "away": {
+          "name": "Morocco"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Haiti"
+        },
+        "away": {
+          "name": "Scotland"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Australia"
+        },
+        "away": {
+          "name": "Turkey"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Germany"
+        },
+        "away": {
+          "name": "Curacao"
+        }
+      },
+      "goals": {
+        "home": 7,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Netherlands"
+        },
+        "away": {
+          "name": "Japan"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 2
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Ivory Coast"
+        },
+        "away": {
+          "name": "Ecuador"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Sweden"
+        },
+        "away": {
+          "name": "Tunisia"
+        }
+      },
+      "goals": {
+        "home": 5,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ]
 }
