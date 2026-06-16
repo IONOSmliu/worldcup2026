@@ -227,6 +227,82 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Spain"
+        },
+        "away": {
+          "name": "Cape Verde"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Belgium"
+        },
+        "away": {
+          "name": "Egypt"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Saudi Arabia"
+        },
+        "away": {
+          "name": "Uruguay"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Iran"
+        },
+        "away": {
+          "name": "New Zealand"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 2
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ]
 }
