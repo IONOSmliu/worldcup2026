@@ -303,6 +303,82 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "France"
+        },
+        "away": {
+          "name": "Senegal"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Iraq"
+        },
+        "away": {
+          "name": "Norway"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 4
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Argentina"
+        },
+        "away": {
+          "name": "Algeria"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Austria"
+        },
+        "away": {
+          "name": "Jordan"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ]
 }
