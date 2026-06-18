@@ -379,6 +379,82 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Portugal"
+        },
+        "away": {
+          "name": "DR Congo"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "England"
+        },
+        "away": {
+          "name": "Croatia"
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 2
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Ghana"
+        },
+        "away": {
+          "name": "Panama"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Uzbekistan"
+        },
+        "away": {
+          "name": "Colombia"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ]
 }
