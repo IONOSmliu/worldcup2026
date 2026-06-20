@@ -455,6 +455,158 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Czechia"
+        },
+        "away": {
+          "name": "South Africa"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Switzerland"
+        },
+        "away": {
+          "name": "Bosnia"
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Canada"
+        },
+        "away": {
+          "name": "Qatar"
+        }
+      },
+      "goals": {
+        "home": 6,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Mexico"
+        },
+        "away": {
+          "name": "South Korea"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "USA"
+        },
+        "away": {
+          "name": "Australia"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Scotland"
+        },
+        "away": {
+          "name": "Morocco"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Brazil"
+        },
+        "away": {
+          "name": "Haiti"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Turkey"
+        },
+        "away": {
+          "name": "Paraguay"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ]
 }
