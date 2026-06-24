@@ -111,6 +111,51 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
   .hero-stats{gap:24px}
 }
 
+/* ── Page Tabs ── */
+.page-tabs{display:flex;gap:0;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:150}
+.page-tab{font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.08em;padding:14px 24px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .18s}
+.page-tab:hover{color:var(--text)}
+.page-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ── Knockout Page ── */
+#knockout-page{display:none;max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+#knockout-page.visible{display:block}
+#group-page.hidden{display:none}
+
+.ko-section{margin-bottom:48px}
+.ko-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.ko-round-tag{font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;border-radius:3px}
+.ko-round-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:500;letter-spacing:0.06em;color:var(--text)}
+.ko-line{flex:1;height:1px;background:var(--border)}
+
+.ko-grid{display:grid;gap:10px}
+.ko-grid-2{grid-template-columns:repeat(2,1fr)}
+.ko-grid-4{grid-template-columns:repeat(4,1fr)}
+.ko-grid-8{grid-template-columns:repeat(4,1fr)}
+@media(max-width:700px){
+  .ko-grid-4,.ko-grid-8{grid-template-columns:repeat(2,1fr)}
+  .ko-grid-2{grid-template-columns:1fr}
+}
+
+.ko-match{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .18s}
+.ko-match:hover{border-color:var(--border2)}
+.ko-match-label{font-family:'Oswald',sans-serif;font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:6px 12px 0;display:flex;justify-content:space-between}
+.ko-team{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;gap:8px;border-bottom:1px solid var(--border)}
+.ko-team:last-of-type{border-bottom:none}
+.ko-team-name{font-size:13px;color:var(--text);display:flex;align-items:center;gap:6px;min-width:0}
+.ko-team-name.tbd{color:var(--muted);font-style:italic;font-size:11px}
+.ko-score{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;color:var(--dim);min-width:20px;text-align:center}
+.ko-score.entered{color:var(--gold2);font-weight:600}
+.ko-team.winner .ko-team-name{color:var(--gold2);font-weight:500}
+.ko-team.winner .ko-score{color:var(--gold2)}
+
+.ko-note{text-align:center;font-size:12px;color:var(--muted);padding:20px;border:1px solid var(--border);border-radius:6px;background:var(--surface);margin-bottom:24px;line-height:1.8}
+.ko-refresh-btn{font-family:'Oswald',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.06em;padding:6px 16px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--gold);cursor:pointer;transition:all .18s;display:block;margin:0 auto 32px}
+.ko-refresh-btn:hover{background:rgba(201,168,76,0.1);border-color:var(--gold)}
+
+/* best-3rd badge */
+.b3-badge{font-family:'Oswald',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.08em;padding:2px 6px;border-radius:3px;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25)}
+
 /* ── Standings Modal ── */
 .group-badge{cursor:pointer;transition:opacity .15s}
 .group-badge:hover{opacity:0.75}
@@ -200,7 +245,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
   <div class="hero-line"></div>
 </div>
 
+<!-- PAGE TABS -->
+<div class="page-tabs">
+  <button class="page-tab active" id="tab-group" onclick="showPage('group')">⚽ <span data-i18n="tabGroup">小组赛</span></button>
+  <button class="page-tab" id="tab-knockout" onclick="showPage('knockout')">🏆 <span data-i18n="tabKnockout">淘汰赛</span></button>
+</div>
+
 <!-- FILTER BAR -->
+<div id="group-page">
 <div class="filter-bar">
   <button class="filter-btn active" data-g="ALL" onclick="filterGroup('ALL',this)" data-i18n="all">全部</button>
   <button class="filter-btn" data-g="A" onclick="filterGroup('A',this)">A</button>
@@ -597,7 +649,108 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-seri
   EDT = 东部夏令时 UTC−4 &nbsp;|&nbsp; CDT = 中部夏令时 UTC−5 &nbsp;|&nbsp; PDT = 太平洋夏令时 UTC−7<br>
   德国 CEST = UTC+2 &nbsp;|&nbsp; 比 EDT +6h，比 CDT +7h，比 PDT +9h
 </div>
-</div>
+</div><!-- end .main -->
+</div><!-- end #group-page -->
+
+<!-- ══════════════ KNOCKOUT PAGE ══════════════ -->
+<div id="knockout-page">
+  <div class="ko-note" id="ko-note-zh">
+    🏆 小组赛全部结束后，系统将根据积分榜自动填入32强对阵。<br>
+    每组前2名直接晋级，另有8支最佳第三名获得资格。<br>
+    <span style="color:var(--muted);font-size:10px">比分输入后请点击「刷新对阵」更新晋级球队</span>
+  </div>
+  <div class="ko-note" id="ko-note-de" style="display:none">
+    🏆 Nach der Gruppenphase werden die Achtelfinal-Paarungen automatisch eingetragen.<br>
+    Die Top 2 jeder Gruppe qualifizieren sich direkt, plus 8 beste Gruppendritte.<br>
+    <span style="color:var(--muted);font-size:10px">Nach Eingabe der Ergebnisse bitte „Aktualisieren" klicken</span>
+  </div>
+  <div class="ko-note" id="ko-note-en" style="display:none">
+    🏆 After the group stage, the Round of 32 draw will be filled in automatically.<br>
+    Top 2 from each group qualify directly, plus 8 best third-placed teams.<br>
+    <span style="color:var(--muted);font-size:10px">After entering scores, click "Refresh Draw" to update</span>
+  </div>
+
+  <button class="ko-refresh-btn" onclick="buildKnockout()">🔄 <span id="ko-refresh-label">刷新对阵</span></button>
+
+  <!-- ROUND OF 32 -->
+  <div class="ko-section">
+    <div class="ko-header">
+      <div class="ko-round-tag" id="ko-r32-tag">32强</div>
+      <div class="ko-round-title" id="ko-r32-title">淘汰赛 · 第一轮</div>
+      <div class="ko-line"></div>
+    </div>
+    <table class="schedule-table" id="ko-r32-grid">
+      <thead><tr>
+        <th id="ko-th-round">轮次</th>
+        <th id="ko-th-match">对阵</th>
+        <th class="center" id="ko-th-score">比分</th>
+        <th id="ko-th-de">德国时间</th>
+        <th class="col-local" id="ko-th-local">当地时间</th>
+      </tr></thead>
+      <tbody id="ko-r32-body"></tbody>
+    </table>
+  </div>
+
+  <!-- ROUND OF 16 -->
+  <div class="ko-section">
+    <div class="ko-header">
+      <div class="ko-round-tag" id="ko-r16-tag">16强</div>
+      <div class="ko-round-title" id="ko-r16-title">淘汰赛 · 第二轮</div>
+      <div class="ko-line"></div>
+    </div>
+    <table class="schedule-table" id="ko-r16-grid">
+      <thead><tr>
+        <th>轮次</th><th>对阵</th><th class="center">比分</th><th>德国时间</th><th class="col-local">当地时间</th>
+      </tr></thead>
+      <tbody id="ko-r16-body"></tbody>
+    </table>
+  </div>
+
+  <!-- QUARTER FINALS -->
+  <div class="ko-section">
+    <div class="ko-header">
+      <div class="ko-round-tag" id="ko-qf-tag">8强</div>
+      <div class="ko-round-title" id="ko-qf-title">四分之一决赛</div>
+      <div class="ko-line"></div>
+    </div>
+    <table class="schedule-table" id="ko-qf-grid">
+      <thead><tr>
+        <th>轮次</th><th>对阵</th><th class="center">比分</th><th>德国时间</th><th class="col-local">当地时间</th>
+      </tr></thead>
+      <tbody id="ko-qf-body"></tbody>
+    </table>
+  </div>
+
+  <!-- SEMI FINALS -->
+  <div class="ko-section">
+    <div class="ko-header">
+      <div class="ko-round-tag" id="ko-sf-tag">4强</div>
+      <div class="ko-round-title" id="ko-sf-title">半决赛</div>
+      <div class="ko-line"></div>
+    </div>
+    <table class="schedule-table" id="ko-sf-grid">
+      <thead><tr>
+        <th>轮次</th><th>对阵</th><th class="center">比分</th><th>德国时间</th><th class="col-local">当地时间</th>
+      </tr></thead>
+      <tbody id="ko-sf-body"></tbody>
+    </table>
+  </div>
+
+  <!-- FINAL -->
+  <div class="ko-section">
+    <div class="ko-header">
+      <div class="ko-round-tag" id="ko-final-tag">决赛</div>
+      <div class="ko-round-title" id="ko-final-title">世界杯决赛</div>
+      <div class="ko-line"></div>
+    </div>
+    <table class="schedule-table" id="ko-final-grid">
+      <thead><tr>
+        <th>轮次</th><th>对阵</th><th class="center">比分</th><th>德国时间</th><th class="col-local">当地时间</th>
+      </tr></thead>
+      <tbody id="ko-final-body"></tbody>
+    </table>
+  </div>
+</div><!-- end #knockout-page -->
 
 <script>
 const T = {
@@ -1605,6 +1758,446 @@ function loadSavedScores() {
     scoreEl.style.whiteSpace = 'nowrap';
   });
 }
+
+// ══════════════════════════════════════════
+// PAGE TAB SWITCHING
+// ══════════════════════════════════════════
+function showPage(page) {
+  const groupPage = document.getElementById('group-page');
+  const koPage = document.getElementById('knockout-page');
+  const filterBar = document.querySelector('.filter-bar');
+  const tabGroup = document.getElementById('tab-group');
+  const tabKnockout = document.getElementById('tab-knockout');
+
+  if(page === 'knockout') {
+    groupPage.classList.add('hidden');
+    if(filterBar) filterBar.style.display = 'none';
+    koPage.classList.add('visible');
+    tabGroup.classList.remove('active');
+    tabKnockout.classList.add('active');
+    buildKnockout();
+  } else {
+    groupPage.classList.remove('hidden');
+    if(filterBar) filterBar.style.display = '';
+    koPage.classList.remove('visible');
+    tabGroup.classList.add('active');
+    tabKnockout.classList.remove('active');
+  }
+}
+
+// ══════════════════════════════════════════
+// KNOCKOUT STAGE LOGIC
+// ══════════════════════════════════════════
+
+// Official FIFA 2026 Round of 32 bracket (Match 73–88)
+// Source: worldcupwiki.com / FIFA official schedule
+// Note: best-3rd slots depend on which 8 groups produce qualifying 3rd-place teams
+// For display we show the group pool description; teams filled in after group stage
+const R32_PAIRS = [
+  // Sun Jun 28
+  { id:'m73', num:73, label:'M73', date:'6月28日(日)', time:'3:00 PM ET', venue:'SoFi · 洛杉矶',
+    home:{grp:'A',pos:2}, away:{grp:'B',pos:2} },
+  // Mon Jun 29
+  { id:'m76', num:76, label:'M76', date:'6月29日(一)', time:'1:00 PM ET', venue:'NRG · 休斯顿',
+    home:{grp:'C',pos:1}, away:{grp:'F',pos:2} },
+  { id:'m74', num:74, label:'M74', date:'6月29日(一)', time:'4:30 PM ET', venue:'Gillette · 波士顿',
+    home:{grp:'E',pos:1}, away:{grp:'b3',pool:'ABCDF'} },
+  { id:'m75', num:75, label:'M75', date:'6月29日(一)', time:'9:00 PM ET', venue:'BBVA · 蒙特雷',
+    home:{grp:'F',pos:1}, away:{grp:'C',pos:2} },
+  // Tue Jun 30
+  { id:'m78', num:78, label:'M78', date:'6月30日(二)', time:'1:00 PM ET', venue:'AT&T · 达拉斯',
+    home:{grp:'E',pos:2}, away:{grp:'I',pos:2} },
+  { id:'m77', num:77, label:'M77', date:'6月30日(二)', time:'5:00 PM ET', venue:'MetLife · 新泽西',
+    home:{grp:'I',pos:1}, away:{grp:'b3',pool:'CDFGH'} },
+  { id:'m79', num:79, label:'M79', date:'6月30日(二)', time:'9:00 PM ET', venue:'Azteca · 墨西哥城',
+    home:{grp:'A',pos:1}, away:{grp:'b3',pool:'CEFHI'} },
+  // Wed Jul 1
+  { id:'m80', num:80, label:'M80', date:'7月1日(三)', time:'12:00 PM ET', venue:'Mercedes-Benz · 亚特兰大',
+    home:{grp:'L',pos:1}, away:{grp:'b3',pool:'EHIJK'} },
+  { id:'m82', num:82, label:'M82', date:'7月1日(三)', time:'4:00 PM ET', venue:'Lumen · 西雅图',
+    home:{grp:'G',pos:1}, away:{grp:'b3',pool:'AEHIJ'} },
+  { id:'m81', num:81, label:'M81', date:'7月1日(三)', time:'8:00 PM ET', venue:"Levi's · 圣克拉拉",
+    home:{grp:'D',pos:1}, away:{grp:'b3',pool:'BEFIJ'} },
+  // Thu Jul 2
+  { id:'m84', num:84, label:'M84', date:'7月2日(四)', time:'3:00 PM ET', venue:'SoFi · 洛杉矶',
+    home:{grp:'H',pos:1}, away:{grp:'J',pos:2} },
+  { id:'m83', num:83, label:'M83', date:'7月2日(四)', time:'7:00 PM ET', venue:'BMO · 多伦多',
+    home:{grp:'K',pos:2}, away:{grp:'L',pos:2} },
+  { id:'m85', num:85, label:'M85', date:'7月2日(四)', time:'11:00 PM ET', venue:'BC Place · 温哥华',
+    home:{grp:'B',pos:1}, away:{grp:'b3',pool:'EFGIJ'} },
+  // Fri Jul 3
+  { id:'m88', num:88, label:'M88', date:'7月3日(五)', time:'2:00 PM ET', venue:'AT&T · 达拉斯',
+    home:{grp:'D',pos:2}, away:{grp:'G',pos:2} },
+  { id:'m86', num:86, label:'M86', date:'7月3日(五)', time:'6:00 PM ET', venue:'Hard Rock · 迈阿密',
+    home:{grp:'J',pos:1}, away:{grp:'H',pos:2} },
+  { id:'m87', num:87, label:'M87', date:'7月3日(五)', time:'9:30 PM ET', venue:'Arrowhead · 堪萨斯城',
+    home:{grp:'K',pos:1}, away:{grp:'b3',pool:'DEIJL'} },
+];
+
+// Official R16 pairings (Match 89–96), Jul 4–7
+const R16_PAIRS = [
+  { id:'m90', num:90, label:'M90', date:'7月4日(六)', time:'1:00 PM ET', venue:'NRG · 休斯顿',     h:'m73', a:'m75' },
+  { id:'m89', num:89, label:'M89', date:'7月4日(六)', time:'5:00 PM ET', venue:'Lincoln · 费城',   h:'m74', a:'m77' },
+  { id:'m91', num:91, label:'M91', date:'7月5日(日)', time:'4:00 PM ET', venue:'MetLife · 新泽西', h:'m76', a:'m78' },
+  { id:'m92', num:92, label:'M92', date:'7月5日(日)', time:'8:00 PM ET', venue:'Azteca · 墨西哥城',h:'m79', a:'m80' },
+  { id:'m93', num:93, label:'M93', date:'7月6日(一)', time:'3:00 PM ET', venue:'AT&T · 达拉斯',   h:'m83', a:'m84' },
+  { id:'m94', num:94, label:'M94', date:'7月6日(一)', time:'8:00 PM ET', venue:'Lumen · 西雅图',   h:'m81', a:'m82' },
+  { id:'m95', num:95, label:'M95', date:'7月7日(二)', time:'12:00 PM ET', venue:'Mercedes-Benz · 亚特兰大', h:'m86', a:'m88' },
+  { id:'m96', num:96, label:'M96', date:'7月7日(二)', time:'4:00 PM ET', venue:'BC Place · 温哥华', h:'m85', a:'m87' },
+];
+
+// Official QF (Match 97–100), Jul 9–11
+const QF_PAIRS = [
+  { id:'m97',  num:97,  label:'M97',  date:'7月9日(四)',  time:'4:00 PM ET', venue:'Gillette · 波士顿',    h:'m89', a:'m90' },
+  { id:'m98',  num:98,  label:'M98',  date:'7月10日(五)', time:'3:00 PM ET', venue:'SoFi · 洛杉矶',        h:'m93', a:'m94' },
+  { id:'m99',  num:99,  label:'M99',  date:'7月11日(六)', time:'5:00 PM ET', venue:'Hard Rock · 迈阿密',   h:'m91', a:'m92' },
+  { id:'m100', num:100, label:'M100', date:'7月11日(六)', time:'9:00 PM ET', venue:'Arrowhead · 堪萨斯城', h:'m95', a:'m96' },
+];
+
+const SF_PAIRS = [
+  { id:'m101', num:101, label:'M101', date:'7月14日(二)', time:'3:00 PM ET', venue:'AT&T · 达拉斯',          h:'m97', a:'m98' },
+  { id:'m102', num:102, label:'M102', date:'7月15日(三)', time:'3:00 PM ET', venue:'Mercedes-Benz · 亚特兰大', h:'m99', a:'m100' },
+];
+
+const FINAL_INFO  = { id:'m104', label:'M104', date:'7月19日(日)', time:'3:00 PM ET', venue:'MetLife · 新泽西' };
+const THIRD_INFO  = { id:'m103', label:'M103', date:'7月18日(六)', time:'5:00 PM ET', venue:'Hard Rock · 迈阿密' };
+
+// Storage for knockout scores
+let koScores = JSON.parse(localStorage.getItem('wc2026_ko_scores') || '{}');
+
+function getSortedStandings(grp) {
+  recalcStandings(grp);
+  return [...STANDINGS[grp]].sort((a,b) => {
+    if(b.pts !== a.pts) return b.pts - a.pts;
+    const gdA = a.gf - a.ga, gdB = b.gf - b.ga;
+    if(gdB !== gdA) return gdB - gdA;
+    return b.gf - a.gf;
+  });
+}
+
+function getTeamDisplayName(teamObj, lang) {
+  if(!teamObj) return null;
+  const raw = T[lang][teamObj.key] || T['zh'][teamObj.key] || '';
+  return teamObj.flag + ' ' + raw.replace(/^\S+\s/, '');
+}
+
+function getBest3rdTeams() {
+  const thirds = [];
+  ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(g => {
+    const sorted = getSortedStandings(g);
+    if(sorted[2]) thirds.push({ ...sorted[2], fromGroup: g });
+  });
+  thirds.sort((a,b) => {
+    if(b.pts !== a.pts) return b.pts - a.pts;
+    const gdA = a.gf - a.ga, gdB = b.gf - b.ga;
+    if(gdB !== gdA) return gdB - gdA;
+    return b.gf - a.gf;
+  });
+  return thirds.slice(0, 8);
+}
+
+let best3rdTeams = [];
+
+// Get team object from a slot spec { grp, pos, pool? }
+// pos: 1 = winner, 2 = runner-up, 'b3' = best 3rd (needs pool)
+function getTeamForSlot(spec) {
+  if(spec.grp === 'b3') {
+    // best 3rd: pick sequentially from best3rdTeams
+    // We index by pool string to keep it deterministic
+    const poolIdx = ['ABCDF','CDFGH','CEFHI','EHIJK','AEHIJ','BEFIJ','EFGIJ','DEIJL'].indexOf(spec.pool);
+    return best3rdTeams[poolIdx >= 0 ? poolIdx : 0] || null;
+  }
+  const sorted = getSortedStandings(spec.grp);
+  return sorted[(spec.pos || 1) - 1] || null;
+}
+
+// ET → CEST (Germany) offset: +6h
+function etToCEST(timeStr) {
+  // timeStr like "4:30 PM", "12:00 PM", "9:30 PM"
+  const m = timeStr.match(/^(\d+):(\d+)\s*(AM|PM)/i);
+  if(!m) return '—';
+  let h = parseInt(m[1]), min = parseInt(m[2]), ampm = m[3].toUpperCase();
+  if(ampm === 'PM' && h !== 12) h += 12;
+  if(ampm === 'AM' && h === 12) h = 0;
+  h += 6; // ET (EDT = UTC-4) → CEST (UTC+2) = +6
+  let day = '';
+  if(h >= 24) { h -= 24; day = ' +1'; }
+  return `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}${day}`;
+}
+
+function makeKoRow(matchId, homeTeam, awayTeam, info) {
+  const lang = currentLang;
+  const homeName = homeTeam ? getTeamDisplayName(homeTeam, lang) : null;
+  const awayName = awayTeam ? getTeamDisplayName(awayTeam, lang) : null;
+
+  const score = koScores[matchId] || { home: null, away: null };
+  const homeWon = score.home !== null && score.away !== null && score.home > score.away;
+  const awayWon = score.home !== null && score.away !== null && score.away > score.home;
+  const scoreEntered = score.home !== null;
+
+  const homeLabel = homeName || '?';
+  const awayLabel = awayName || '?';
+  const homeTbd = !homeName;
+  const awayTbd = !awayName;
+
+  const scoreText = scoreEntered ? `${score.home} - ${score.away}` : '-:-';
+  const scoreColor = scoreEntered ? 'color:var(--gold2);font-weight:600' : '';
+
+  const cestTime = etToCEST(info.time || '');
+  const localTime = info.time || '';
+  const venue = info.venue || '';
+  const label = info.label || matchId.toUpperCase();
+
+  const roundBadge = `<span style="font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;padding:3px 9px;border-radius:3px;display:inline-block;white-space:nowrap;background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid rgba(201,168,76,0.25)">${label}</span>`;
+
+  const homeStyle = homeWon ? 'color:var(--gold2);font-weight:500' : homeTbd ? 'color:var(--muted);font-style:italic' : '';
+  const awayStyle = awayWon ? 'color:var(--gold2);font-weight:500' : awayTbd ? 'color:var(--muted);font-style:italic' : '';
+
+  return `<tr class="match-row" id="${matchId}" style="cursor:${adminMode?'pointer':'default'}" onclick="editKoScore('${matchId}')" title="${adminMode?'点击编辑比分':''}">
+  <td>${roundBadge}</td>
+  <td>
+    <div class="match-teams">
+      <span class="team" style="${homeStyle}">${homeLabel}</span>
+      <span class="vs-sep">VS</span>
+      <span class="team" style="${awayStyle}">${awayLabel}</span>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px">${venue}</div>
+  </td>
+  <td class="score-wrap">
+    <span class="score" style="${scoreColor}">${scoreText}</span>
+  </td>
+  <td><div class="time-main">${cestTime} CEST</div></td>
+  <td class="time-cell col-local"><div class="time-main">${localTime}</div><div class="time-sub">ET</div></td>
+</tr>`;
+}
+
+function makeDateRow(dateStr) {
+  return `<tr><td colspan="5"><div class="date-label">${dateStr}</div></td></tr>`;
+}
+
+function renderWithDates(pairs, teamFn) {
+  let lastDate = null;
+  return pairs.map(p => {
+    let html = '';
+    if(p.date && p.date !== lastDate) {
+      html += makeDateRow(p.date);
+      lastDate = p.date;
+    }
+    const [h, a] = teamFn(p);
+    html += makeKoRow(p.id, h, a, p);
+    return html;
+  }).join('');
+}
+
+function getKoWinner(matchId, homeTeam, awayTeam) {
+  const score = koScores[matchId];
+  if(!score || score.home === null || score.away === null) return null;
+  if(score.home > score.away) return homeTeam;
+  if(score.away > score.home) return awayTeam;
+  return null;
+}
+
+// Helper: get the two teams in a R32 match
+function r32Teams(mid) {
+  const p = R32_PAIRS.find(x => x.id === mid);
+  if(!p) return [null, null];
+  return [getTeamForSlot(p.home), getTeamForSlot(p.away)];
+}
+
+// Helper: get winner of a R32 match
+function r32Winner(mid) {
+  const [h, a] = r32Teams(mid);
+  return getKoWinner(mid, h, a);
+}
+
+// Helper: get winner of a R16 match
+function r16Winner(mid) {
+  const p = R16_PAIRS.find(x => x.id === mid);
+  if(!p) return null;
+  return getKoWinner(mid, r32Winner(p.h), r32Winner(p.a));
+}
+
+// Helper: get winner of a QF match
+function qfWinner(mid) {
+  const p = QF_PAIRS.find(x => x.id === mid);
+  if(!p) return null;
+  return getKoWinner(mid, r16Winner(p.h), r16Winner(p.a));
+}
+
+// Helper: get winner of a SF match
+function sfWinner(mid) {
+  const p = SF_PAIRS.find(x => x.id === mid);
+  if(!p) return null;
+  return getKoWinner(mid, qfWinner(p.h), qfWinner(p.a));
+}
+
+function buildKnockout() {
+  best3rdTeams = getBest3rdTeams();
+
+  function setBody(id, html) {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = html;
+  }
+
+  setBody('ko-r32-body', renderWithDates(R32_PAIRS, p => [getTeamForSlot(p.home), getTeamForSlot(p.away)]));
+  setBody('ko-r16-body', renderWithDates(R16_PAIRS, p => [r32Winner(p.h), r32Winner(p.a)]));
+  setBody('ko-qf-body',  renderWithDates(QF_PAIRS,  p => [r16Winner(p.h), r16Winner(p.a)]));
+  setBody('ko-sf-body',  renderWithDates(SF_PAIRS,  p => [qfWinner(p.h),  qfWinner(p.a)]));
+
+  const sf1L = (() => { const p=SF_PAIRS[0]; const h=qfWinner(p.h),a=qfWinner(p.a); return getKoWinner(p.id,h,a)===h?a:h; })();
+  const sf2L = (() => { const p=SF_PAIRS[1]; const h=qfWinner(p.h),a=qfWinner(p.a); return getKoWinner(p.id,h,a)===h?a:h; })();
+  setBody('ko-final-body',
+    renderWithDates([
+      {...THIRD_INFO, home: sf1L,           away: sf2L,           id:'m103'},
+      {...FINAL_INFO, home: sfWinner('m101'), away: sfWinner('m102'), id:'m104'},
+    ], p => [p.home, p.away])
+  );
+}
+
+function editKoScore(matchId) {
+  if(!adminMode) return;
+  const existing = koScores[matchId] || { home: null, away: null };
+  const h = existing.home !== null ? existing.home : '';
+  const a = existing.away !== null ? existing.away : '';
+  const input = prompt(
+    currentLang === 'zh' ? `输入比分 (格式: 主场-客场)` :
+    currentLang === 'de' ? `Ergebnis eingeben (Format: Heim-Gast)` :
+    `Enter score (format: home-away)`,
+    h !== '' && a !== '' ? `${h}-${a}` : ''
+  );
+  if(input === null) return;
+  const clean = input.trim();
+  if(clean === '' || clean === '-') {
+    delete koScores[matchId];
+  } else {
+    const m = clean.match(/^(\d+)\s*[-:]\s*(\d+)$/);
+    if(m) {
+      koScores[matchId] = { home: parseInt(m[1]), away: parseInt(m[2]) };
+    } else {
+      alert(currentLang === 'zh' ? '格式错误，请输入如 2-1' : 'Invalid format, e.g. 2-1');
+      return;
+    }
+  }
+  localStorage.setItem('wc2026_ko_scores', JSON.stringify(koScores));
+  buildKnockout();
+}
+
+let _koLangUpdating = false;
+function updateKoLang(lang) {
+  const labels = {
+    zh: { r32:'32强', r32t:'淘汰赛 · 第一轮', r16:'16强', r16t:'淘汰赛 · 第二轮',
+          qf:'8强', qft:'四分之一决赛', sf:'4强', sft:'半决赛', fin:'决赛', fint:'世界杯决赛',
+          third:'三四名决赛', champion:'冠军决赛',
+          refresh:'刷新对阵', note0:'ko-note-zh' },
+    de: { r32:'Achtelfinale', r32t:'Knockout · Runde 1', r16:'Achtelfinale', r16t:'Knockout · Runde 2',
+          qf:'Viertelfinale', qft:'Viertelfinale', sf:'Halbfinale', sft:'Halbfinale',
+          fin:'Finale', fint:'WM-Finale', third:'Spiel um Platz 3', champion:'Finale',
+          refresh:'Aktualisieren', note0:'ko-note-de' },
+    en: { r32:'R32', r32t:'Round of 32', r16:'R16', r16t:'Round of 16',
+          qf:'QF', qft:'Quarter-Finals', sf:'SF', sft:'Semi-Finals',
+          fin:'Final', fint:'World Cup Final', third:'Third Place', champion:'Final',
+          refresh:'Refresh Draw', note0:'ko-note-en' },
+  };
+  const l = labels[lang] || labels.zh;
+  const el = id => document.getElementById(id);
+  if(el('ko-r32-tag')) el('ko-r32-tag').textContent = l.r32;
+  if(el('ko-r32-title')) el('ko-r32-title').textContent = l.r32t;
+  if(el('ko-r16-tag')) el('ko-r16-tag').textContent = l.r16;
+  if(el('ko-r16-title')) el('ko-r16-title').textContent = l.r16t;
+  if(el('ko-qf-tag')) el('ko-qf-tag').textContent = l.qf;
+  if(el('ko-qf-title')) el('ko-qf-title').textContent = l.qft;
+  if(el('ko-sf-tag')) el('ko-sf-tag').textContent = l.sf;
+  if(el('ko-sf-title')) el('ko-sf-title').textContent = l.sft;
+  if(el('ko-final-tag')) el('ko-final-tag').textContent = l.fin;
+  if(el('ko-final-title')) el('ko-final-title').textContent = l.fint;
+  if(el('ko-third-title')) el('ko-third-title').textContent = l.third;
+  if(el('ko-champion-title')) el('ko-champion-title').textContent = l.champion;
+  if(el('ko-refresh-label')) el('ko-refresh-label').textContent = l.refresh;
+  ['ko-note-zh','ko-note-de','ko-note-en'].forEach(id => {
+    const n = el(id); if(n) n.style.display = id === l.note0 ? '' : 'none';
+  });
+  // Update tab labels
+  const tabLabels = { zh:['⚽ 小组赛','🏆 淘汰赛'], de:['⚽ Gruppenphase','🏆 Knockout'], en:['⚽ Group Stage','🏆 Knockout'] };
+  const tl = tabLabels[lang] || tabLabels.zh;
+  const tg = document.getElementById('tab-group');
+  const tk = document.getElementById('tab-knockout');
+  if(tg) tg.innerHTML = tl[0];
+  if(tk) tk.innerHTML = tl[1];
+
+  // Also update match dates/venues in the R32/R16/QF/SF data to match language
+  // (dates are currently stored in Chinese; update them for de/en)
+  const dateMap = {
+    de: {
+      '6月28日(日)':'28. Jun (So.)', '6月29日(一)':'29. Jun (Mo.)', '6月30日(二)':'30. Jun (Di.)',
+      '7月1日(三)':'1. Jul (Mi.)',   '7月2日(四)':'2. Jul (Do.)',   '7月3日(五)':'3. Jul (Fr.)',
+      '7月4日(六)':'4. Jul (Sa.)',   '7月5日(日)':'5. Jul (So.)',   '7月6日(一)':'6. Jul (Mo.)',
+      '7月7日(二)':'7. Jul (Di.)',   '7月9日(四)':'9. Jul (Do.)',   '7月10日(五)':'10. Jul (Fr.)',
+      '7月11日(六)':'11. Jul (Sa.)', '7月14日(二)':'14. Jul (Di.)', '7月15日(三)':'15. Jul (Mi.)',
+      '7月18日(六)':'18. Jul (Sa.)', '7月19日(日)':'19. Jul (So.)',
+    },
+    en: {
+      '6月28日(日)':'Jun 28 (Sun)', '6月29日(一)':'Jun 29 (Mon)', '6月30日(二)':'Jun 30 (Tue)',
+      '7月1日(三)':'Jul 1 (Wed)',   '7月2日(四)':'Jul 2 (Thu)',   '7月3日(五)':'Jul 3 (Fri)',
+      '7月4日(六)':'Jul 4 (Sat)',   '7月5日(日)':'Jul 5 (Sun)',   '7月6日(一)':'Jul 6 (Mon)',
+      '7月7日(二)':'Jul 7 (Tue)',   '7月9日(四)':'Jul 9 (Thu)',   '7月10日(五)':'Jul 10 (Fri)',
+      '7月11日(六)':'Jul 11 (Sat)', '7月14日(二)':'Jul 14 (Tue)', '7月15日(三)':'Jul 15 (Wed)',
+      '7月18日(六)':'Jul 18 (Sat)', '7月19日(日)':'Jul 19 (Sun)',
+    },
+  };
+  const venueMap = {
+    de: { 'SoFi · 洛杉矶':'SoFi · Los Angeles', 'NRG · 休斯顿':'NRG · Houston',
+          'Gillette · 波士顿':'Gillette · Boston', 'BBVA · 蒙特雷':'BBVA · Monterrey',
+          'AT&T · 达拉斯':'AT&T · Dallas', 'MetLife · 新泽西':'MetLife · New Jersey',
+          'Azteca · 墨西哥城':'Azteca · Mexiko-Stadt', 'Mercedes-Benz · 亚特兰大':'Mercedes-Benz · Atlanta',
+          'Lumen · 西雅图':'Lumen · Seattle', "Levi's · 圣克拉拉":"Levi's · Santa Clara",
+          'BMO · 多伦多':'BMO · Toronto', 'Hard Rock · 迈阿密':'Hard Rock · Miami',
+          'BC Place · 温哥华':'BC Place · Vancouver', 'Arrowhead · 堪萨斯城':'Arrowhead · Kansas City',
+          'Lincoln · 费城':'Lincoln · Philadelphia' },
+    en: { 'SoFi · 洛杉矶':'SoFi · LA', 'NRG · 休斯顿':'NRG · Houston',
+          'Gillette · 波士顿':'Gillette · Boston', 'BBVA · 蒙特雷':'BBVA · Monterrey',
+          'AT&T · 达拉斯':'AT&T · Dallas', 'MetLife · 新泽西':'MetLife · NJ',
+          'Azteca · 墨西哥城':'Azteca · Mexico City', 'Mercedes-Benz · 亚特兰大':'Mercedes-Benz · Atlanta',
+          'Lumen · 西雅图':'Lumen · Seattle', "Levi's · 圣克拉拉":"Levi's · Santa Clara",
+          'BMO · 多伦多':'BMO · Toronto', 'Hard Rock · 迈阿密':'Hard Rock · Miami',
+          'BC Place · 温哥华':'BC Place · Vancouver', 'Arrowhead · 堪萨斯城':'Arrowhead · KC',
+          'Lincoln · 费城':'Lincoln · Philadelphia' },
+  };
+
+  // If knockout page is visible, rebuild it to re-render team names + translated dates
+  if(!_koLangUpdating && document.getElementById('knockout-page').classList.contains('visible')) {
+    _koLangUpdating = true;
+    // Temporarily patch dates/venues for non-zh languages then rebuild
+    const allPairs = [...R32_PAIRS, ...R16_PAIRS, ...QF_PAIRS, ...SF_PAIRS];
+    if(lang !== 'zh' && dateMap[lang]) {
+      allPairs.forEach(p => {
+        if(p.date && dateMap[lang][p.date]) p._date = p.date, p.date = dateMap[lang][p.date];
+        if(p.venue && venueMap[lang] && venueMap[lang][p.venue]) p._venue = p.venue, p.venue = venueMap[lang][p.venue];
+      });
+      [FINAL_INFO, THIRD_INFO].forEach(p => {
+        if(p.date && dateMap[lang][p.date]) p._date = p.date, p.date = dateMap[lang][p.date];
+        if(p.venue && venueMap[lang] && venueMap[lang][p.venue]) p._venue = p.venue, p.venue = venueMap[lang][p.venue];
+      });
+    }
+    buildKnockout();
+    _koLangUpdating = false;
+    // Restore original zh values
+    allPairs.forEach(p => { if(p._date) { p.date = p._date; delete p._date; } if(p._venue) { p.venue = p._venue; delete p._venue; } });
+    [FINAL_INFO, THIRD_INFO].forEach(p => { if(p._date) { p.date = p._date; delete p._date; } if(p._venue) { p.venue = p._venue; delete p._venue; } });
+  }
+}
+
+// Hook into setLang to also update KO page labels
+const _origSetLang = setLang;
+// patch setLang to also call updateKoLang
+const _patchedSetLang = function(lang, btn) {
+  _origSetLang(lang, btn);
+  updateKoLang(lang);
+};
+// Override onclick handlers to use patched version
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  const lang = btn.getAttribute('onclick').match(/'(\w+)'/)?.[1];
+  if(lang) btn.onclick = () => _patchedSetLang(lang, btn);
+});
 
 loadSavedScores();
 </script>
