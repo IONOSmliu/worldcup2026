@@ -1088,7 +1088,7 @@ function filterGroup(g, btn) {
   if(csel) csel.value = '';
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.match-row').forEach(row => {
+  document.querySelectorAll('.match-row[data-g]').forEach(row => {
     row.classList.toggle('hidden', g !== 'ALL' && row.dataset.g !== g);
   });
   // 点击具体小组时弹出积分榜
@@ -1277,21 +1277,29 @@ function applyScores(fixtures, rowMap) {
 
 async function loadScores() {
   try {
-    // 加时间戳防止浏览器缓存
     const res = await fetch(`scores.json?t=${Date.now()}`);
     if(!res.ok) return;
     const data = await res.json();
-    if(!data.response || data.response.length === 0) return;
 
-    const rowMap = buildRowMap();
-    applyScores(data.response, rowMap);
-
-    // 更新刷新时间
-    const ind = document.getElementById('refresh-indicator');
-    if(ind) {
-      const t = new Date().toLocaleTimeString();
-      ind.textContent = `⟳ ${t}`;
+    // 小组赛比分
+    if(data.response && data.response.length > 0) {
+      const rowMap = buildRowMap();
+      applyScores(data.response, rowMap);
+      recalcAllStandings();
     }
+
+    // 淘汰赛比分
+    if(data.ko_scores) {
+      localStorage.setItem('wc2026_ko_scores', JSON.stringify(data.ko_scores));
+      koScores = data.ko_scores;
+      // 如果淘汰赛页面已打开则刷新
+      if(document.getElementById('knockout-page').classList.contains('visible')) {
+        buildKnockout();
+      }
+    }
+
+    const ind = document.getElementById('refresh-indicator');
+    if(ind) ind.textContent = `⟳ ${new Date().toLocaleTimeString()}`;
   } catch(e) {
     // scores.json 还不存在（开赛前正常）
   }
@@ -1645,6 +1653,8 @@ function exitAdmin() {
 
 function buildScoresJson() {
   const response = [];
+
+  // 小组赛比分
   document.querySelectorAll('.match-row[data-teams]').forEach(row => {
     const [home, away] = row.dataset.teams.split(',');
     const scoreEl = row.querySelector('.score');
@@ -1658,7 +1668,14 @@ function buildScoresJson() {
       });
     }
   });
-  return { response };
+
+  // 淘汰赛比分（从 localStorage 读取）
+  const ko = JSON.parse(localStorage.getItem('wc2026_ko_scores') || '{}');
+  const koMatches = Object.entries(ko).map(([id, score]) => ({
+    ko: true, id, goals: score, fixture: { status: { short: 'FT' } }
+  }));
+
+  return { response, ko_scores: ko };
 }
 
 function syncScores() {
@@ -1679,10 +1696,7 @@ function syncScores() {
 function editScore(el) {
   if(!adminMode) return;
   const current = el.textContent.trim();
-  const row = el.closest('.match-row');
-  const teams = row ? row.dataset.teams : '';
 
-  // Create inline input
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'score-edit-input';
@@ -1696,7 +1710,6 @@ function editScore(el) {
 
   function save() {
     const val = input.value.trim();
-    // Accept formats: "2-1", "2 - 1", "2:1"
     const m = val.match(/^(\d+)\s*[-:]\s*(\d+)$/);
     const newEl = document.createElement('span');
     newEl.className = 'score' + (adminMode ? ' editable' : '');
@@ -1704,28 +1717,17 @@ function editScore(el) {
     if(adminMode) newEl.onclick = () => editScore(newEl);
 
     if(m) {
-      const g1 = parseInt(m[1]), g2 = parseInt(m[2]);
-      newEl.textContent = `${g1} - ${g2}`;
+      newEl.textContent = `${parseInt(m[1])} - ${parseInt(m[2])}`;
       newEl.style.color = 'var(--gold2)';
       newEl.style.fontWeight = '600';
       newEl.style.whiteSpace = 'nowrap';
-      // Save to localStorage
-      if(teams) {
-        const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
-        saved[teams] = { home: g1, away: g2, status: 'FT' };
-        localStorage.setItem('wc2026_scores', JSON.stringify(saved));
-      }
     } else {
       newEl.textContent = '-:-';
       newEl.style.color = '';
       newEl.style.fontWeight = '';
-      if(teams) {
-        const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
-        delete saved[teams];
-        localStorage.setItem('wc2026_scores', JSON.stringify(saved));
-      }
     }
     input.replaceWith(newEl);
+    recalcAllStandings();
   }
 
   input.addEventListener('blur', save);
@@ -1741,22 +1743,8 @@ function editScore(el) {
   });
 }
 
-// Load saved scores from localStorage on page load
-function loadSavedScores() {
-  const saved = JSON.parse(localStorage.getItem('wc2026_scores') || '{}');
-  if(Object.keys(saved).length === 0) return;
-
-  document.querySelectorAll('.match-row[data-teams]').forEach(row => {
-    const teams = row.dataset.teams;
-    if(!saved[teams]) return;
-    const scoreEl = row.querySelector('.score');
-    if(!scoreEl) return;
-    const { home, away } = saved[teams];
-    scoreEl.textContent = `${home} - ${away}`;
-    scoreEl.style.color = 'var(--gold2)';
-    scoreEl.style.fontWeight = '600';
-    scoreEl.style.whiteSpace = 'nowrap';
-  });
+function recalcAllStandings() {
+  ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(g => recalcStandings(g));
 }
 
 // ══════════════════════════════════════════
@@ -1795,72 +1783,72 @@ function showPage(page) {
 // For display we show the group pool description; teams filled in after group stage
 const R32_PAIRS = [
   // Sun Jun 28
-  { id:'m73', num:73, label:'M73', date:'6月28日(日)', time:'3:00 PM ET', venue:'SoFi · 洛杉矶',
+  { id:'m73', num:73, label:'M73', date:'6月28日(日)', time:'3:00 PM', tz:'PDT', utc:[6,28,15,0], venue:'SoFi · 洛杉矶',
     home:{grp:'A',pos:2}, away:{grp:'B',pos:2} },
   // Mon Jun 29
-  { id:'m76', num:76, label:'M76', date:'6月29日(一)', time:'1:00 PM ET', venue:'NRG · 休斯顿',
+  { id:'m76', num:76, label:'M76', date:'6月29日(一)', time:'1:00 PM', tz:'CDT', utc:[6,29,13,0], venue:'NRG · 休斯顿',
     home:{grp:'C',pos:1}, away:{grp:'F',pos:2} },
-  { id:'m74', num:74, label:'M74', date:'6月29日(一)', time:'4:30 PM ET', venue:'Gillette · 波士顿',
+  { id:'m74', num:74, label:'M74', date:'6月29日(一)', time:'4:30 PM', tz:'EDT', utc:[6,29,16,30], venue:'Gillette · 波士顿',
     home:{grp:'E',pos:1}, away:{grp:'b3',pool:'ABCDF'} },
-  { id:'m75', num:75, label:'M75', date:'6月29日(一)', time:'9:00 PM ET', venue:'BBVA · 蒙特雷',
+  { id:'m75', num:75, label:'M75', date:'6月29日(一)', time:'9:00 PM', tz:'CST', utc:[6,29,20,0], venue:'BBVA · 蒙特雷',
     home:{grp:'F',pos:1}, away:{grp:'C',pos:2} },
   // Tue Jun 30
-  { id:'m78', num:78, label:'M78', date:'6月30日(二)', time:'1:00 PM ET', venue:'AT&T · 达拉斯',
+  { id:'m78', num:78, label:'M78', date:'6月30日(二)', time:'1:00 PM', tz:'CDT', utc:[6,30,13,0], venue:'AT&T · 达拉斯',
     home:{grp:'E',pos:2}, away:{grp:'I',pos:2} },
-  { id:'m77', num:77, label:'M77', date:'6月30日(二)', time:'5:00 PM ET', venue:'MetLife · 新泽西',
+  { id:'m77', num:77, label:'M77', date:'6月30日(二)', time:'5:00 PM', tz:'EDT', utc:[6,30,17,0], venue:'MetLife · 新泽西',
     home:{grp:'I',pos:1}, away:{grp:'b3',pool:'CDFGH'} },
-  { id:'m79', num:79, label:'M79', date:'6月30日(二)', time:'9:00 PM ET', venue:'Azteca · 墨西哥城',
+  { id:'m79', num:79, label:'M79', date:'6月30日(二)', time:'9:00 PM', tz:'CST', utc:[6,30,20,0], venue:'Azteca · 墨西哥城',
     home:{grp:'A',pos:1}, away:{grp:'b3',pool:'CEFHI'} },
   // Wed Jul 1
-  { id:'m80', num:80, label:'M80', date:'7月1日(三)', time:'12:00 PM ET', venue:'Mercedes-Benz · 亚特兰大',
+  { id:'m80', num:80, label:'M80', date:'7月1日(三)', time:'12:00 PM', tz:'EDT', utc:[7,1,12,0], venue:'Mercedes-Benz · 亚特兰大',
     home:{grp:'L',pos:1}, away:{grp:'b3',pool:'EHIJK'} },
-  { id:'m82', num:82, label:'M82', date:'7月1日(三)', time:'4:00 PM ET', venue:'Lumen · 西雅图',
+  { id:'m82', num:82, label:'M82', date:'7月1日(三)', time:'4:00 PM', tz:'PDT', utc:[7,1,16,0], venue:'Lumen · 西雅图',
     home:{grp:'G',pos:1}, away:{grp:'b3',pool:'AEHIJ'} },
-  { id:'m81', num:81, label:'M81', date:'7月1日(三)', time:'8:00 PM ET', venue:"Levi's · 圣克拉拉",
+  { id:'m81', num:81, label:'M81', date:'7月1日(三)', time:'8:00 PM', tz:'PDT', utc:[7,1,20,0], venue:"Levi's · 圣克拉拉",
     home:{grp:'D',pos:1}, away:{grp:'b3',pool:'BEFIJ'} },
   // Thu Jul 2
-  { id:'m84', num:84, label:'M84', date:'7月2日(四)', time:'3:00 PM ET', venue:'SoFi · 洛杉矶',
+  { id:'m84', num:84, label:'M84', date:'7月2日(四)', time:'3:00 PM', tz:'PDT', utc:[7,2,15,0], venue:'SoFi · 洛杉矶',
     home:{grp:'H',pos:1}, away:{grp:'J',pos:2} },
-  { id:'m83', num:83, label:'M83', date:'7月2日(四)', time:'7:00 PM ET', venue:'BMO · 多伦多',
+  { id:'m83', num:83, label:'M83', date:'7月2日(四)', time:'7:00 PM', tz:'EDT', utc:[7,2,19,0], venue:'BMO · 多伦多',
     home:{grp:'K',pos:2}, away:{grp:'L',pos:2} },
-  { id:'m85', num:85, label:'M85', date:'7月2日(四)', time:'11:00 PM ET', venue:'BC Place · 温哥华',
+  { id:'m85', num:85, label:'M85', date:'7月2日(四)', time:'11:00 PM', tz:'PDT', utc:[7,2,23,0], venue:'BC Place · 温哥华',
     home:{grp:'B',pos:1}, away:{grp:'b3',pool:'EFGIJ'} },
   // Fri Jul 3
-  { id:'m88', num:88, label:'M88', date:'7月3日(五)', time:'2:00 PM ET', venue:'AT&T · 达拉斯',
+  { id:'m88', num:88, label:'M88', date:'7月3日(五)', time:'2:00 PM', tz:'CDT', utc:[7,3,14,0], venue:'AT&T · 达拉斯',
     home:{grp:'D',pos:2}, away:{grp:'G',pos:2} },
-  { id:'m86', num:86, label:'M86', date:'7月3日(五)', time:'6:00 PM ET', venue:'Hard Rock · 迈阿密',
+  { id:'m86', num:86, label:'M86', date:'7月3日(五)', time:'6:00 PM', tz:'EDT', utc:[7,3,18,0], venue:'Hard Rock · 迈阿密',
     home:{grp:'J',pos:1}, away:{grp:'H',pos:2} },
-  { id:'m87', num:87, label:'M87', date:'7月3日(五)', time:'9:30 PM ET', venue:'Arrowhead · 堪萨斯城',
+  { id:'m87', num:87, label:'M87', date:'7月3日(五)', time:'9:30 PM', tz:'CDT', utc:[7,3,21,30], venue:'Arrowhead · 堪萨斯城',
     home:{grp:'K',pos:1}, away:{grp:'b3',pool:'DEIJL'} },
 ];
 
 // Official R16 pairings (Match 89–96), Jul 4–7
 const R16_PAIRS = [
-  { id:'m90', num:90, label:'M90', date:'7月4日(六)', time:'1:00 PM ET', venue:'NRG · 休斯顿',     h:'m73', a:'m75' },
-  { id:'m89', num:89, label:'M89', date:'7月4日(六)', time:'5:00 PM ET', venue:'Lincoln · 费城',   h:'m74', a:'m77' },
-  { id:'m91', num:91, label:'M91', date:'7月5日(日)', time:'4:00 PM ET', venue:'MetLife · 新泽西', h:'m76', a:'m78' },
-  { id:'m92', num:92, label:'M92', date:'7月5日(日)', time:'8:00 PM ET', venue:'Azteca · 墨西哥城',h:'m79', a:'m80' },
-  { id:'m93', num:93, label:'M93', date:'7月6日(一)', time:'3:00 PM ET', venue:'AT&T · 达拉斯',   h:'m83', a:'m84' },
-  { id:'m94', num:94, label:'M94', date:'7月6日(一)', time:'8:00 PM ET', venue:'Lumen · 西雅图',   h:'m81', a:'m82' },
-  { id:'m95', num:95, label:'M95', date:'7月7日(二)', time:'12:00 PM ET', venue:'Mercedes-Benz · 亚特兰大', h:'m86', a:'m88' },
-  { id:'m96', num:96, label:'M96', date:'7月7日(二)', time:'4:00 PM ET', venue:'BC Place · 温哥华', h:'m85', a:'m87' },
+  { id:'m90', num:90, label:'M90', date:'7月4日(六)', time:'1:00 PM', tz:'CDT', utc:[7,4,13,0], venue:'NRG · 休斯顿',     h:'m73', a:'m75' },
+  { id:'m89', num:89, label:'M89', date:'7月4日(六)', time:'5:00 PM', tz:'EDT', utc:[7,4,17,0], venue:'Lincoln · 费城',   h:'m74', a:'m77' },
+  { id:'m91', num:91, label:'M91', date:'7月5日(日)', time:'4:00 PM', tz:'EDT', utc:[7,5,16,0], venue:'MetLife · 新泽西', h:'m76', a:'m78' },
+  { id:'m92', num:92, label:'M92', date:'7月5日(日)', time:'8:00 PM', tz:'CST', utc:[7,5,20,0], venue:'Azteca · 墨西哥城',h:'m79', a:'m80' },
+  { id:'m93', num:93, label:'M93', date:'7月6日(一)', time:'3:00 PM', tz:'CDT', utc:[7,6,15,0], venue:'AT&T · 达拉斯',   h:'m83', a:'m84' },
+  { id:'m94', num:94, label:'M94', date:'7月6日(一)', time:'8:00 PM', tz:'PDT', utc:[7,6,20,0], venue:'Lumen · 西雅图',   h:'m81', a:'m82' },
+  { id:'m95', num:95, label:'M95', date:'7月7日(二)', time:'12:00 PM', tz:'EDT', utc:[7,7,12,0], venue:'Mercedes-Benz · 亚特兰大', h:'m86', a:'m88' },
+  { id:'m96', num:96, label:'M96', date:'7月7日(二)', time:'4:00 PM', tz:'PDT', utc:[7,7,16,0], venue:'BC Place · 温哥华', h:'m85', a:'m87' },
 ];
 
 // Official QF (Match 97–100), Jul 9–11
 const QF_PAIRS = [
-  { id:'m97',  num:97,  label:'M97',  date:'7月9日(四)',  time:'4:00 PM ET', venue:'Gillette · 波士顿',    h:'m89', a:'m90' },
-  { id:'m98',  num:98,  label:'M98',  date:'7月10日(五)', time:'3:00 PM ET', venue:'SoFi · 洛杉矶',        h:'m93', a:'m94' },
-  { id:'m99',  num:99,  label:'M99',  date:'7月11日(六)', time:'5:00 PM ET', venue:'Hard Rock · 迈阿密',   h:'m91', a:'m92' },
-  { id:'m100', num:100, label:'M100', date:'7月11日(六)', time:'9:00 PM ET', venue:'Arrowhead · 堪萨斯城', h:'m95', a:'m96' },
+  { id:'m97',  num:97,  label:'M97',  date:'7月9日(四)',  time:'4:00 PM', tz:'EDT', utc:[7,9,16,0],  venue:'Gillette · 波士顿',    h:'m89', a:'m90' },
+  { id:'m98',  num:98,  label:'M98',  date:'7月10日(五)', time:'3:00 PM', tz:'PDT', utc:[7,10,15,0], venue:'SoFi · 洛杉矶',        h:'m93', a:'m94' },
+  { id:'m99',  num:99,  label:'M99',  date:'7月11日(六)', time:'5:00 PM', tz:'EDT', utc:[7,11,17,0], venue:'Hard Rock · 迈阿密',   h:'m91', a:'m92' },
+  { id:'m100', num:100, label:'M100', date:'7月11日(六)', time:'9:00 PM', tz:'CDT', utc:[7,11,21,0], venue:'Arrowhead · 堪萨斯城', h:'m95', a:'m96' },
 ];
 
 const SF_PAIRS = [
-  { id:'m101', num:101, label:'M101', date:'7月14日(二)', time:'3:00 PM ET', venue:'AT&T · 达拉斯',          h:'m97', a:'m98' },
-  { id:'m102', num:102, label:'M102', date:'7月15日(三)', time:'3:00 PM ET', venue:'Mercedes-Benz · 亚特兰大', h:'m99', a:'m100' },
+  { id:'m101', num:101, label:'M101', date:'7月14日(二)', time:'3:00 PM', tz:'CDT', utc:[7,14,15,0], venue:'AT&T · 达拉斯',          h:'m97', a:'m98' },
+  { id:'m102', num:102, label:'M102', date:'7月15日(三)', time:'3:00 PM', tz:'EDT', utc:[7,15,15,0], venue:'Mercedes-Benz · 亚特兰大', h:'m99', a:'m100' },
 ];
 
-const FINAL_INFO  = { id:'m104', label:'M104', date:'7月19日(日)', time:'3:00 PM ET', venue:'MetLife · 新泽西' };
-const THIRD_INFO  = { id:'m103', label:'M103', date:'7月18日(六)', time:'5:00 PM ET', venue:'Hard Rock · 迈阿密' };
+const FINAL_INFO  = { id:'m104', label:'M104', date:'7月19日(日)', time:'3:00 PM', tz:'EDT', utc:[7,19,15,0], venue:'MetLife · 新泽西' };
+const THIRD_INFO  = { id:'m103', label:'M103', date:'7月18日(六)', time:'5:00 PM', tz:'EDT', utc:[7,18,17,0], venue:'Hard Rock · 迈阿密' };
 
 // Storage for knockout scores
 let koScores = JSON.parse(localStorage.getItem('wc2026_ko_scores') || '{}');
@@ -1911,18 +1899,33 @@ function getTeamForSlot(spec) {
   return sorted[(spec.pos || 1) - 1] || null;
 }
 
-// ET → CEST (Germany) offset: +6h
-function etToCEST(timeStr) {
-  // timeStr like "4:30 PM", "12:00 PM", "9:30 PM"
-  const m = timeStr.match(/^(\d+):(\d+)\s*(AM|PM)/i);
-  if(!m) return '—';
-  let h = parseInt(m[1]), min = parseInt(m[2]), ampm = m[3].toUpperCase();
-  if(ampm === 'PM' && h !== 12) h += 12;
-  if(ampm === 'AM' && h === 12) h = 0;
-  h += 6; // ET (EDT = UTC-4) → CEST (UTC+2) = +6
-  let day = '';
-  if(h >= 24) { h -= 24; day = ' +1'; }
-  return `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}${day}`;
+// Compute local time string for a match given tz code
+function koLocalTime(utc, tz, lang) {
+  const [month, day, hour, min] = utc;
+  const offset = VENUE_OFFSET[tz];
+  // local time = UTC time (already stored as local) — just format directly
+  const hStr = String(hour).padStart(2,'0');
+  const mStr = String(min).padStart(2,'0');
+  const dayOfYear = (month===6 ? day : day+30);
+  const june1dow = 1;
+  const totalDayOffset = (month===6 ? day-1 : month===7 ? day+29 : day-2);
+  const dow = ((june1dow + totalDayOffset) % 7 + 7) % 7;
+  const dowStr = DOW[lang][dow];
+  let dateStr;
+  if(lang==='zh') dateStr = `${month}月${day}日(${dowStr})`;
+  else if(lang==='de') dateStr = `${day}. ${MONTH.de(month)}(${dowStr})`;
+  else dateStr = `${MONTH.en(month)} ${day} (${dowStr})`;
+  return `${dateStr} ${hStr}:${mStr}`;
+}
+
+// data-match value: "month,day,hour,min,TZ"  (same format as group stage)
+function koDataMatch(utc, tz) {
+  return `${utc[0]},${utc[1]},${utc[2]},${utc[3]},${tz}`;
+}
+
+// data-ltime value: "zh|en|de" pipe-separated local time strings
+function koDataLtime(utc, tz) {
+  return ['zh','en','de'].map(l => koLocalTime(utc, tz, l)).join('|');
 }
 
 function makeKoRow(matchId, homeTeam, awayTeam, info) {
@@ -1942,9 +1945,6 @@ function makeKoRow(matchId, homeTeam, awayTeam, info) {
 
   const scoreText = scoreEntered ? `${score.home} - ${score.away}` : '-:-';
   const scoreColor = scoreEntered ? 'color:var(--gold2);font-weight:600' : '';
-
-  const cestTime = etToCEST(info.time || '');
-  const localTime = info.time || '';
   const venue = info.venue || '';
   const label = info.label || matchId.toUpperCase();
 
@@ -1952,6 +1952,23 @@ function makeKoRow(matchId, homeTeam, awayTeam, info) {
 
   const homeStyle = homeWon ? 'color:var(--gold2);font-weight:500' : homeTbd ? 'color:var(--muted);font-style:italic' : '';
   const awayStyle = awayWon ? 'color:var(--gold2);font-weight:500' : awayTbd ? 'color:var(--muted);font-style:italic' : '';
+
+  // Build time cells using same system as group stage
+  const utc = info.utc || [6,28,12,0];
+  const tz  = info.tz  || 'EDT';
+  const dataMatch = koDataMatch(utc, tz);
+  const dataLtime = koDataLtime(utc, tz);
+  const localFmt  = koLocalTime(utc, tz, 'zh');
+
+  // Compute converted time (same as refreshConvertedTimes does for group stage)
+  const isLocal = currentTZ === 'local';
+  let deTimeText;
+  if(isLocal) {
+    deTimeText = localFmt;
+  } else {
+    const utcMin = utcMinFromMatch(utc[0], utc[1], utc[2], utc[3], tz);
+    deTimeText = formatConverted(utcMin, parseFloat(currentTZ), currentLang);
+  }
 
   return `<tr class="match-row" id="${matchId}" style="cursor:${adminMode?'pointer':'default'}" onclick="editKoScore('${matchId}')" title="${adminMode?'点击编辑比分':''}">
   <td>${roundBadge}</td>
@@ -1966,8 +1983,8 @@ function makeKoRow(matchId, homeTeam, awayTeam, info) {
   <td class="score-wrap">
     <span class="score" style="${scoreColor}">${scoreText}</span>
   </td>
-  <td><div class="time-main">${cestTime} CEST</div></td>
-  <td class="time-cell col-local"><div class="time-main">${localTime}</div><div class="time-sub">ET</div></td>
+  <td class="col-tz"><span class="de-time" data-match="${dataMatch}" data-localfmt="${localFmt}">${deTimeText}</span></td>
+  <td class="time-cell col-local"><div class="time-main" data-ltime="${dataLtime}"></div><div class="time-sub">${tz}</div></td>
 </tr>`;
 }
 
@@ -2048,10 +2065,18 @@ function buildKnockout() {
   const sf2L = (() => { const p=SF_PAIRS[1]; const h=qfWinner(p.h),a=qfWinner(p.a); return getKoWinner(p.id,h,a)===h?a:h; })();
   setBody('ko-final-body',
     renderWithDates([
-      {...THIRD_INFO, home: sf1L,           away: sf2L,           id:'m103'},
+      {...THIRD_INFO, home: sf1L,            away: sf2L,             id:'m103'},
       {...FINAL_INFO, home: sfWinner('m101'), away: sfWinner('m102'), id:'m104'},
     ], p => [p.home, p.away])
   );
+
+  // Apply local time text and sync timezone conversion
+  document.querySelectorAll('#knockout-page [data-ltime]').forEach(el => {
+    const parts = el.dataset.ltime.split('|');
+    const idx = T[currentLang]?.ltimeIdx ?? 0;
+    el.textContent = parts[idx] || parts[0];
+  });
+  refreshConvertedTimes();
 }
 
 function editKoScore(matchId) {
@@ -2199,7 +2224,7 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
   if(lang) btn.onclick = () => _patchedSetLang(lang, btn);
 });
 
-loadSavedScores();
+// scores loaded via scores.json on page load
 </script>
 </body>
 </html>
