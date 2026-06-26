@@ -1025,6 +1025,120 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Curacao"
+        },
+        "away": {
+          "name": "Ivory Coast"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 3
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Ecuador"
+        },
+        "away": {
+          "name": "Germany"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Japan"
+        },
+        "away": {
+          "name": "Sweden"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Tunisia"
+        },
+        "away": {
+          "name": "Netherlands"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Turkey"
+        },
+        "away": {
+          "name": "USA"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 2
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Paraguay"
+        },
+        "away": {
+          "name": "Australia"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ],
   "ko_scores": {}
