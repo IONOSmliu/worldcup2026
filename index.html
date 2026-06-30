@@ -1781,122 +1781,97 @@ function showPage(page) {
 // Source: worldcupwiki.com / FIFA official schedule
 // Note: best-3rd slots depend on which 8 groups produce qualifying 3rd-place teams
 // For display we show the group pool description; teams filled in after group stage
+// ══════════════════════════════════════════
+// 真实32强对阵（手动核对自FIFA/Yahoo/CBS官方数据）
+// 每场比赛直接写死两队，不再用积分榜算法推测
+// home/away: {key, flag} —— key对应 T[lang][key] 翻译表里的队名
+// score: 已知比分(若已完赛)，否则为null
+// ══════════════════════════════════════════
 const R32_PAIRS = [
   // Sun Jun 28
   { id:'m73', num:73, label:'M73', date:'6月28日(日)', time:'3:00 PM', tz:'PDT', utc:[6,28,15,0], venue:'SoFi · 洛杉矶',
-    home:{grp:'A',pos:2}, away:{grp:'B',pos:2} },
+    home:{key:'rsa',flag:'🇿🇦'}, away:{key:'can',flag:'🇨🇦'}, score:{home:0,away:1} },
   // Mon Jun 29
   { id:'m76', num:76, label:'M76', date:'6月29日(一)', time:'1:00 PM', tz:'CDT', utc:[6,29,13,0], venue:'NRG · 休斯顿',
-    home:{grp:'C',pos:1}, away:{grp:'F',pos:2} },
+    home:{key:'bra',flag:'🇧🇷'}, away:{key:'jpn',flag:'🇯🇵'}, score:{home:2,away:1} },
   { id:'m74', num:74, label:'M74', date:'6月29日(一)', time:'4:30 PM', tz:'EDT', utc:[6,29,16,30], venue:'Gillette · 波士顿',
-    home:{grp:'E',pos:1}, away:{grp:'b3',pool:'ABCDF'} },
+    home:{key:'ger',flag:'🇩🇪'}, away:{key:'par',flag:'🇵🇾'}, score:{home:1,away:1} },
   { id:'m75', num:75, label:'M75', date:'6月29日(一)', time:'9:00 PM', tz:'CST', utc:[6,29,20,0], venue:'BBVA · 蒙特雷',
-    home:{grp:'F',pos:1}, away:{grp:'C',pos:2} },
+    home:{key:'ned',flag:'🇳🇱'}, away:{key:'mar',flag:'🇲🇦'}, score:{home:1,away:1} },
   // Tue Jun 30
-  { id:'m78', num:78, label:'M78', date:'6月30日(二)', time:'1:00 PM', tz:'CDT', utc:[6,30,13,0], venue:'AT&T · 达拉斯',
-    home:{grp:'E',pos:2}, away:{grp:'I',pos:2} },
+  { id:'m78', num:78, label:'M78', date:'6月30日(二)', time:'12:00 PM', tz:'CDT', utc:[6,30,12,0], venue:'AT&T · 达拉斯',
+    home:{key:'civ',flag:'🇨🇮'}, away:{key:'nor',flag:'🇳🇴'}, score:null },
   { id:'m77', num:77, label:'M77', date:'6月30日(二)', time:'5:00 PM', tz:'EDT', utc:[6,30,17,0], venue:'MetLife · 新泽西',
-    home:{grp:'I',pos:1}, away:{grp:'b3',pool:'CDFGH'} },
-  { id:'m79', num:79, label:'M79', date:'6月30日(二)', time:'9:00 PM', tz:'CST', utc:[6,30,20,0], venue:'Azteca · 墨西哥城',
-    home:{grp:'A',pos:1}, away:{grp:'b3',pool:'CEFHI'} },
+    home:{key:'fra',flag:'🇫🇷'}, away:{key:'swe',flag:'🇸🇪'}, score:null },
+  { id:'m79', num:79, label:'M79', date:'6月30日(二)', time:'7:00 PM', tz:'CST', utc:[6,30,19,0], venue:'Azteca · 墨西哥城',
+    home:{key:'mex',flag:'🇲🇽'}, away:{key:'ecu',flag:'🇪🇨'}, score:null },
   // Wed Jul 1
   { id:'m80', num:80, label:'M80', date:'7月1日(三)', time:'12:00 PM', tz:'EDT', utc:[7,1,12,0], venue:'Mercedes-Benz · 亚特兰大',
-    home:{grp:'L',pos:1}, away:{grp:'b3',pool:'EHIJK'} },
-  { id:'m82', num:82, label:'M82', date:'7月1日(三)', time:'4:00 PM', tz:'PDT', utc:[7,1,16,0], venue:'Lumen · 西雅图',
-    home:{grp:'G',pos:1}, away:{grp:'b3',pool:'AEHIJ'} },
-  { id:'m81', num:81, label:'M81', date:'7月1日(三)', time:'8:00 PM', tz:'PDT', utc:[7,1,20,0], venue:"Levi's · 圣克拉拉",
-    home:{grp:'D',pos:1}, away:{grp:'b3',pool:'BEFIJ'} },
+    home:{key:'eng',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'}, away:{key:'cod',flag:'🇨🇩'}, score:null },
+  { id:'m82', num:82, label:'M82', date:'7月1日(三)', time:'1:00 PM', tz:'PDT', utc:[7,1,13,0], venue:'Lumen · 西雅图',
+    home:{key:'bel',flag:'🇧🇪'}, away:{key:'sen',flag:'🇸🇳'}, score:null },
+  { id:'m81', num:81, label:'M81', date:'7月1日(三)', time:'5:00 PM', tz:'PDT', utc:[7,1,17,0], venue:"Levi's · 圣克拉拉",
+    home:{key:'usa',flag:'🇺🇸'}, away:{key:'bih',flag:'🇧🇦'}, score:null },
   // Thu Jul 2
-  { id:'m84', num:84, label:'M84', date:'7月2日(四)', time:'3:00 PM', tz:'PDT', utc:[7,2,15,0], venue:'SoFi · 洛杉矶',
-    home:{grp:'H',pos:1}, away:{grp:'J',pos:2} },
+  { id:'m84', num:84, label:'M84', date:'7月2日(四)', time:'12:00 PM', tz:'PDT', utc:[7,2,12,0], venue:'SoFi · 洛杉矶',
+    home:{key:'esp',flag:'🇪🇸'}, away:{key:'aut',flag:'🇦🇹'}, score:null },
   { id:'m83', num:83, label:'M83', date:'7月2日(四)', time:'7:00 PM', tz:'EDT', utc:[7,2,19,0], venue:'BMO · 多伦多',
-    home:{grp:'K',pos:2}, away:{grp:'L',pos:2} },
-  { id:'m85', num:85, label:'M85', date:'7月2日(四)', time:'11:00 PM', tz:'PDT', utc:[7,2,23,0], venue:'BC Place · 温哥华',
-    home:{grp:'B',pos:1}, away:{grp:'b3',pool:'EFGIJ'} },
+    home:{key:'por',flag:'🇵🇹'}, away:{key:'cro',flag:'🇭🇷'}, score:null },
+  { id:'m85', num:85, label:'M85', date:'7月2日(四)', time:'8:00 PM', tz:'PDT', utc:[7,2,20,0], venue:'BC Place · 温哥华',
+    home:{key:'sui',flag:'🇨🇭'}, away:{key:'alg',flag:'🇩🇿'}, score:null },
   // Fri Jul 3
-  { id:'m88', num:88, label:'M88', date:'7月3日(五)', time:'2:00 PM', tz:'CDT', utc:[7,3,14,0], venue:'AT&T · 达拉斯',
-    home:{grp:'D',pos:2}, away:{grp:'G',pos:2} },
+  { id:'m88', num:88, label:'M88', date:'7月3日(五)', time:'1:00 PM', tz:'CDT', utc:[7,3,13,0], venue:'AT&T · 达拉斯',
+    home:{key:'aus',flag:'🇦🇺'}, away:{key:'egy',flag:'🇪🇬'}, score:null },
   { id:'m86', num:86, label:'M86', date:'7月3日(五)', time:'6:00 PM', tz:'EDT', utc:[7,3,18,0], venue:'Hard Rock · 迈阿密',
-    home:{grp:'J',pos:1}, away:{grp:'H',pos:2} },
-  { id:'m87', num:87, label:'M87', date:'7月3日(五)', time:'9:30 PM', tz:'CDT', utc:[7,3,21,30], venue:'Arrowhead · 堪萨斯城',
-    home:{grp:'K',pos:1}, away:{grp:'b3',pool:'DEIJL'} },
+    home:{key:'arg',flag:'🇦🇷'}, away:{key:'cpv',flag:'🇨🇻'}, score:null },
+  { id:'m87', num:87, label:'M87', date:'7月3日(五)', time:'8:30 PM', tz:'CDT', utc:[7,3,20,30], venue:'Arrowhead · 堪萨斯城',
+    home:{key:'col',flag:'🇨🇴'}, away:{key:'gha',flag:'🇬🇭'}, score:null },
 ];
 
-// Official R16 pairings (Match 89–96), Jul 4–7
+// Official R16 pairings (Match 89–96), Jul 4–7 —— 赢家自动推进
 const R16_PAIRS = [
-  { id:'m90', num:90, label:'M90', date:'7月4日(六)', time:'1:00 PM', tz:'CDT', utc:[7,4,13,0], venue:'NRG · 休斯顿',     h:'m73', a:'m75' },
+  { id:'m90', num:90, label:'M90', date:'7月4日(六)', time:'12:00 PM', tz:'CDT', utc:[7,4,12,0], venue:'NRG · 休斯顿',     h:'m73', a:'m75' },
   { id:'m89', num:89, label:'M89', date:'7月4日(六)', time:'5:00 PM', tz:'EDT', utc:[7,4,17,0], venue:'Lincoln · 费城',   h:'m74', a:'m77' },
   { id:'m91', num:91, label:'M91', date:'7月5日(日)', time:'4:00 PM', tz:'EDT', utc:[7,5,16,0], venue:'MetLife · 新泽西', h:'m76', a:'m78' },
-  { id:'m92', num:92, label:'M92', date:'7月5日(日)', time:'8:00 PM', tz:'CST', utc:[7,5,20,0], venue:'Azteca · 墨西哥城',h:'m79', a:'m80' },
-  { id:'m93', num:93, label:'M93', date:'7月6日(一)', time:'3:00 PM', tz:'CDT', utc:[7,6,15,0], venue:'AT&T · 达拉斯',   h:'m83', a:'m84' },
-  { id:'m94', num:94, label:'M94', date:'7月6日(一)', time:'8:00 PM', tz:'PDT', utc:[7,6,20,0], venue:'Lumen · 西雅图',   h:'m81', a:'m82' },
+  { id:'m92', num:92, label:'M92', date:'7月5日(日)', time:'6:00 PM', tz:'CST', utc:[7,5,18,0], venue:'Azteca · 墨西哥城',h:'m79', a:'m80' },
+  { id:'m93', num:93, label:'M93', date:'7月6日(一)', time:'2:00 PM', tz:'CDT', utc:[7,6,14,0], venue:'AT&T · 达拉斯',   h:'m83', a:'m84' },
+  { id:'m94', num:94, label:'M94', date:'7月6日(一)', time:'5:00 PM', tz:'PDT', utc:[7,6,17,0], venue:'Lumen · 西雅图',   h:'m81', a:'m82' },
   { id:'m95', num:95, label:'M95', date:'7月7日(二)', time:'12:00 PM', tz:'EDT', utc:[7,7,12,0], venue:'Mercedes-Benz · 亚特兰大', h:'m86', a:'m88' },
-  { id:'m96', num:96, label:'M96', date:'7月7日(二)', time:'4:00 PM', tz:'PDT', utc:[7,7,16,0], venue:'BC Place · 温哥华', h:'m85', a:'m87' },
+  { id:'m96', num:96, label:'M96', date:'7月7日(二)', time:'1:00 PM', tz:'PDT', utc:[7,7,13,0], venue:'BC Place · 温哥华', h:'m85', a:'m87' },
 ];
 
 // Official QF (Match 97–100), Jul 9–11
 const QF_PAIRS = [
   { id:'m97',  num:97,  label:'M97',  date:'7月9日(四)',  time:'4:00 PM', tz:'EDT', utc:[7,9,16,0],  venue:'Gillette · 波士顿',    h:'m89', a:'m90' },
-  { id:'m98',  num:98,  label:'M98',  date:'7月10日(五)', time:'3:00 PM', tz:'PDT', utc:[7,10,15,0], venue:'SoFi · 洛杉矶',        h:'m93', a:'m94' },
+  { id:'m98',  num:98,  label:'M98',  date:'7月10日(五)', time:'12:00 PM', tz:'PDT', utc:[7,10,12,0], venue:'SoFi · 洛杉矶',        h:'m93', a:'m94' },
   { id:'m99',  num:99,  label:'M99',  date:'7月11日(六)', time:'5:00 PM', tz:'EDT', utc:[7,11,17,0], venue:'Hard Rock · 迈阿密',   h:'m91', a:'m92' },
-  { id:'m100', num:100, label:'M100', date:'7月11日(六)', time:'9:00 PM', tz:'CDT', utc:[7,11,21,0], venue:'Arrowhead · 堪萨斯城', h:'m95', a:'m96' },
+  { id:'m100', num:100, label:'M100', date:'7月11日(六)', time:'8:00 PM', tz:'CDT', utc:[7,11,20,0], venue:'Arrowhead · 堪萨斯城', h:'m95', a:'m96' },
 ];
 
 const SF_PAIRS = [
-  { id:'m101', num:101, label:'M101', date:'7月14日(二)', time:'3:00 PM', tz:'CDT', utc:[7,14,15,0], venue:'AT&T · 达拉斯',          h:'m97', a:'m98' },
+  { id:'m101', num:101, label:'M101', date:'7月14日(二)', time:'2:00 PM', tz:'CDT', utc:[7,14,14,0], venue:'AT&T · 达拉斯',          h:'m97', a:'m98' },
   { id:'m102', num:102, label:'M102', date:'7月15日(三)', time:'3:00 PM', tz:'EDT', utc:[7,15,15,0], venue:'Mercedes-Benz · 亚特兰大', h:'m99', a:'m100' },
 ];
 
 const FINAL_INFO  = { id:'m104', label:'M104', date:'7月19日(日)', time:'3:00 PM', tz:'EDT', utc:[7,19,15,0], venue:'MetLife · 新泽西' };
 const THIRD_INFO  = { id:'m103', label:'M103', date:'7月18日(六)', time:'5:00 PM', tz:'EDT', utc:[7,18,17,0], venue:'Hard Rock · 迈阿密' };
 
-// Storage for knockout scores
+// Storage for knockout scores (admin-entered + pre-filled known scores above)
 let koScores = JSON.parse(localStorage.getItem('wc2026_ko_scores') || '{}');
-
-function getSortedStandings(grp) {
-  recalcStandings(grp);
-  return [...STANDINGS[grp]].sort((a,b) => {
-    if(b.pts !== a.pts) return b.pts - a.pts;
-    const gdA = a.gf - a.ga, gdB = b.gf - b.ga;
-    if(gdB !== gdA) return gdB - gdA;
-    return b.gf - a.gf;
-  });
-}
+// 把已知比分预填进 koScores（不覆盖管理员手动输入的更新值）
+R32_PAIRS.forEach(p => {
+  if(p.score && !koScores[p.id]) koScores[p.id] = p.score;
+});
 
 function getTeamDisplayName(teamObj, lang) {
   if(!teamObj) return null;
   const raw = T[lang][teamObj.key] || T['zh'][teamObj.key] || '';
-  return teamObj.flag + ' ' + raw.replace(/^\S+\s/, '');
+  return teamObj.flag + ' ' + raw;
 }
 
-function getBest3rdTeams() {
-  const thirds = [];
-  ['A','B','C','D','E','F','G','H','I','J','K','L'].forEach(g => {
-    const sorted = getSortedStandings(g);
-    if(sorted[2]) thirds.push({ ...sorted[2], fromGroup: g });
-  });
-  thirds.sort((a,b) => {
-    if(b.pts !== a.pts) return b.pts - a.pts;
-    const gdA = a.gf - a.ga, gdB = b.gf - b.ga;
-    if(gdB !== gdA) return gdB - gdA;
-    return b.gf - a.gf;
-  });
-  return thirds.slice(0, 8);
-}
-
-let best3rdTeams = [];
-
-// Get team object from a slot spec { grp, pos, pool? }
-// pos: 1 = winner, 2 = runner-up, 'b3' = best 3rd (needs pool)
-function getTeamForSlot(spec) {
-  if(spec.grp === 'b3') {
-    // best 3rd: pick sequentially from best3rdTeams
-    // We index by pool string to keep it deterministic
-    const poolIdx = ['ABCDF','CDFGH','CEFHI','EHIJK','AEHIJ','BEFIJ','EFGIJ','DEIJL'].indexOf(spec.pool);
-    return best3rdTeams[poolIdx >= 0 ? poolIdx : 0] || null;
-  }
-  const sorted = getSortedStandings(spec.grp);
-  return sorted[(spec.pos || 1) - 1] || null;
+// 32强对阵已直接硬编码在 R32_PAIRS 中，不再需要从积分榜推算
+function getTeamForSlot(p, side) {
+  return side === 'home' ? p.home : p.away;
 }
 
 // Compute local time string for a match given tz code
@@ -2018,7 +1993,7 @@ function getKoWinner(matchId, homeTeam, awayTeam) {
 function r32Teams(mid) {
   const p = R32_PAIRS.find(x => x.id === mid);
   if(!p) return [null, null];
-  return [getTeamForSlot(p.home), getTeamForSlot(p.away)];
+  return [p.home, p.away];
 }
 
 // Helper: get winner of a R32 match
@@ -2049,14 +2024,12 @@ function sfWinner(mid) {
 }
 
 function buildKnockout() {
-  best3rdTeams = getBest3rdTeams();
-
   function setBody(id, html) {
     const el = document.getElementById(id);
     if(el) el.innerHTML = html;
   }
 
-  setBody('ko-r32-body', renderWithDates(R32_PAIRS, p => [getTeamForSlot(p.home), getTeamForSlot(p.away)]));
+  setBody('ko-r32-body', renderWithDates(R32_PAIRS, p => [p.home, p.away]));
   setBody('ko-r16-body', renderWithDates(R16_PAIRS, p => [r32Winner(p.h), r32Winner(p.a)]));
   setBody('ko-qf-body',  renderWithDates(QF_PAIRS,  p => [r16Winner(p.h), r16Winner(p.a)]));
   setBody('ko-sf-body',  renderWithDates(SF_PAIRS,  p => [qfWinner(p.h),  qfWinner(p.a)]));
