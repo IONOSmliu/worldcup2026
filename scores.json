@@ -1139,7 +1139,252 @@
           "short": "FT"
         }
       }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Norway"
+        },
+        "away": {
+          "name": "France"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 4
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Senegal"
+        },
+        "away": {
+          "name": "Iraq"
+        }
+      },
+      "goals": {
+        "home": 5,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Cape Verde"
+        },
+        "away": {
+          "name": "Saudi Arabia"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Uruguay"
+        },
+        "away": {
+          "name": "Spain"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Egypt"
+        },
+        "away": {
+          "name": "Iran"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "New Zealand"
+        },
+        "away": {
+          "name": "Belgium"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 5
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Panama"
+        },
+        "away": {
+          "name": "England"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 2
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Croatia"
+        },
+        "away": {
+          "name": "Ghana"
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Colombia"
+        },
+        "away": {
+          "name": "Portugal"
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "DR Congo"
+        },
+        "away": {
+          "name": "Uzbekistan"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Algeria"
+        },
+        "away": {
+          "name": "Austria"
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 3
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "name": "Jordan"
+        },
+        "away": {
+          "name": "Argentina"
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        }
+      }
     }
   ],
-  "ko_scores": {}
+  "ko_scores": {
+    "m73": {
+      "home": 1,
+      "away": 3
+    },
+    "m76": {
+      "home": 2,
+      "away": 1
+    },
+    "m74": {
+      "home": 4,
+      "away": 5
+    },
+    "m75": {
+      "home": 3,
+      "away": 4
+    }
+  }
 }
